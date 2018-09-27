@@ -1,3 +1,5 @@
+<template src="views/sub-dir/comp" />
+
 <template key="customKey">
 
     <h3 class="ui dividing header">{{l "title"}}</h3>
