@@ -1,0 +1,53 @@
+<template key="customKey">
+
+    <h3 class="ui dividing header">{{l "title"}}</h3>
+{{#if profile.invoices}}
+    
+    <table class="ui striped table">
+        <thead>
+            <tr>
+                <th>{{t "attributes.invoice.invoice-date"}}</th>
+                <th>{{t "attributes.invoice.invoice-number"}}</th>
+                <th>{{t "attributes.invoice.invoice-total"}}</th>
+                <th class="centered">{{t "attributes.invoice.paid-in-full-at"}}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each profile.invoices as |invoice|}}
+                <tr>
+                    <td>{{momentFormat invoice.invoiceDate "LL"}}</td>
+                    <td>{{invoice.invoiceNumber}}</td>
+                    <td>{{euro invoice.invoiceTotal}}</td>
+                    <td class="centered">
+                        {{#if invoice.is.busy}}
+                            <i class="loading spinner icon"></i>
+                        {{else}}
+                            <hh-checkbox value={{invoice.isPaidInFull}} />
+                        {{/if}}
+                    </td>
+                    <td>
+                        <a href={{invoice.downloadUrl}} target="_blank">
+                            <i class="file pdf outline icon"></i>
+                            {{l "download"}}
+                        </a>
+                        
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+{{else}}
+    <p>{{l "no-invoices"}}</p>
+{{/if}}
+
+</template>
+
+<template>
+
+    <h2>Niks</h2>
+
+</template>
+
+console.log('I am still Javascript');
