@@ -1,0 +1,695 @@
+<Template src="./views/sub-dir/comp.hbs" />
+<Template>
+
+	<h1 title={{Name}}>{{Hallo}}</h1>
+	<p>Dit is een template</p>
+
+	{{#if showHeader}}
+	<div class="ui {{fallback class "blue"}} segment card-header">
+			<h4 class="ui {{fallback class "blue"}} header">
+				<i class="ui icons">
+					<i class="icon {{icon}}"></i>
+					{{#if cornerIcon}}
+						<i class="corner {{cornerIcon}} icon"></i>
+					{{/if}}
+				</i>
+				{{title}}
+			</h4>
+		</div>
+	{{/if}}
+
+	{{yield}}
+
+
+</Template>
+
+<Script>
+
+import Chicken from 'chickenjs';
+import ErrorStackParser from 'error-stack-parser';
+
+
+////////////
+// Routes //
+////////////
+
+Chicken.app.routes(function() {0
+
+	// ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗
+	// ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝
+	// ██████╔╝██║   ██║██████╔╝██║     ██║██║     
+	// ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║     
+	// ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗
+	// ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝
+	//                                             
+	
+	if (Chicken.environment === 'beta') {
+
+		this.route('', 'App@layout').nest({ viewContainer: 'page' }, function() {
+
+			this.route('/', 'Public@betaHome').as('public.home');
+
+			this.route('/contact', 'App@betaContact').as('public.contact');
+			this.route('/privacybeleid', 'Public@privacy').as('public.privacy');
+			this.route('/cookie-instellingen', 'Public@cookies').as('public.cookies');
+			
+
+		});
+
+	} else {
+
+		this.route('', 'Public@layout').nest({ viewContainer: 'page' }, function() {
+			
+			this.route('/', 'Public@home').as('public.home');
+			
+			this.route('/ik-zoek-werk', 'Public@findJobs').as('public.find-jobs').nest(function() {
+
+				this.route('/waarnemend-huisarts', 'Public@findJobsAs').as('public.find-jobs.waarnemer');
+				this.route('/praktijkondersteuner-en-praktijkverpleegkundige', 'Public@findJobsAs').as('public.find-jobs.poh');
+				this.route('/doktersassistent', 'Public@findJobsAs').as('public.find-jobs.assistent');
+				this.route('/student-geneeskunde', 'Public@findJobsAs').as('public.find-jobs.student');
+				this.route('/basisarts', 'Public@findJobsAs').as('public.find-jobs.basisarts');
+			});
+			
+			this.route('/ik-zoek-personeel', 'Public@findCandidates').as('public.find-candidates').nest(function() {
+				this.route('/waarnemend-huisarts', 'Public@findCandidatesType').as('public.find-candidates.waarnemer');
+				this.route('/praktijkondersteuner-en-praktijkverpleegkundige', 'Public@findCandidatesType').as('public.find-candidates.poh');
+				this.route('/doktersassistent', 'Public@findCandidatesType').as('public.find-candidates.assistent');
+				this.route('/triagist', 'Public@findCandidatesType').as('public.find-candidates.triagist');
+			});
+
+			this.route('/vacatures', 'Public@jobOpenings').as('public.job-openings');
+			this.route('/praktijken', 'Public@companies').as('public.companies');
+			this.route('/kandidaten', 'Public@employees').as('public.employees');
+			this.route('/tarieven', 'Public@rates').as('public.rates');
+			this.route('/referenties', 'Public@references').as('public.references');
+			this.route('/over-ons', 'Public@aboutUs').as('public.about-us');
+			this.route('/contact', 'Public@contact').as('public.contact');
+			this.route('/privacybeleid', 'Public@privacy').as('public.privacy');
+			this.route('/cookie-instellingen', 'Public@cookies').as('public.cookies');
+			this.route('/download-app', 'Public@downloadApp').as('public.download-app');
+
+		});
+
+	}
+
+
+	////////////////
+	// App routes //
+	////////////////
+
+	this.route('/app', 'App@layout').nest({ viewContainer: 'page' }, function() {
+
+		///////////
+		// Login //
+		///////////
+
+		this.group({ middleware: ['auth.check-not-logged-in']}, function() {
+		
+			this.route('/inloggen', 'App@login').as('login');
+		
+			this.route('/inloggen/wachtwoord-vergeten', 'App@lostPassword').as('login.lost-password');
+			this.route('/inloggen/wachtwoord-opnieuw-instellen/:email/:token', 'App@resetPassword').as('login.lost-password.reset');
+
+		});
+
+		
+		////////////
+		// Signup //
+		////////////
+
+		this.route('/inschrijven', 'Signup@step1_UserType').as('signup').nest(function() {
+
+			this.group({ middleware: ['auth.check-not-logged-in']}, function() {
+
+				this.route('/:type', 'Signup@step2_ProfileType').as('signup.2-profile-type').constrain('type', /^kandidaat|praktijk$/);
+				this.route('/:profileType', 'Signup@step3_CreateUser').as('signup.3-create-user');
+
+			});
+			this.group({ middleware: ['auth.jwt']}, function() {
+
+				this.route('/:profileType/profiel', 'Signup@step4_BasicProfile').as('signup.4-basic-profile');
+				this.route('/:profileType/voltooid', 'Signup@step5_Complete').as('signup.5-complete');
+
+			});
+
+		});
+
+
+		/////////////////////////
+		// Prefab route groups //
+		/////////////////////////
+
+		let editProfileRoutes = (router, uri, name) => {
+
+			router.route(uri, 'EditProfile@index').as(name).nest({ viewContainer: 'edit-profile' }, function() {
+
+				this.route('/', 'EditProfile@basics').as('.basics');
+				this.route('/cv', 'EditProfile@resume').as('.resume');
+				this.route('/ervaring', 'EditProfile@certifications').as('.certifications');
+				this.route('/documenten', 'EditProfile@documents').as('.documents');
+				this.route('/tarieven', 'EditProfile@rates').as('.rates');	
+				this.route('/communicatie-voorkeuren', 'EditProfile@communicationPreferences').as('.communication-preferences');
+				this.route('/facturen', 'EditProfile@invoices').as('.invoices');
+				this.route('/wachtwoord', 'EditProfile@password').as('.password');
+
+			});
+
+		};
+		let editCompanyRoutes = (router, uri, name) => {
+
+			router.route(uri, 'EditCompany@index').as(name).nest({ viewContainer: 'edit-company' }, function() {
+
+				this.route('/', 'EditCompany@basics').as('.basics');
+				this.route('/documenten', 'EditCompany@documents').as('.documents');
+				this.route('/medewerkers', 'EditCompany@profiles').as('.profiles');
+				this.route('/facturen', 'EditCompany@invoices').as('.invoices');				
+				this.route('/contactpersonen', 'EditCompany@representatives').as('.representatives');				
+				
+			});
+
+		};
+
+		//////////////////
+		// Error routes //
+		//////////////////
+
+		this.group({ middleware: ['auth.jwt'] }, function() {
+
+			this.route('/gebruiker-verwijderd', 'Error@profileDeleted').as('error.profile-deleted');
+			this.route('/niet-geactiveerd', 'Error@profileNotActivated').as('error.profile-not-activated');
+			
+			this.route('/accept-privacy-terms', 'Error@acceptPrivacyTerms').as('error.accept-privacy-terms');
+
+		});
+
+		//////////////////////
+		// Protected routes //
+		//////////////////////
+
+		this.group({ middleware: ['auth.jwt', 'auth.check-profile', 'auth.modules', 'load-services'] }, function() {
+
+			//      ██╗ ██████╗ ██████╗ ███████╗
+			//      ██║██╔═══██╗██╔══██╗██╔════╝
+			//      ██║██║   ██║██████╔╝███████╗
+			// ██   ██║██║   ██║██╔══██╗╚════██║
+			// ╚█████╔╝╚██████╔╝██████╔╝███████║
+			//  ╚════╝  ╚═════╝ ╚═════╝ ╚══════╝
+			//                                  
+
+			this.group({ moduleKey: 'jobs' }, function() {
+
+				/////////////////
+				// Create JOBS //
+				/////////////////
+
+				this.group({ moduleMinimumLevel: 8 }, function() {
+				
+					this.route('/nieuwe-aanvraag', 'CreateJob@step1_Category').as('create-job').nest(function() {
+
+						this.route('/:category', 'CreateJob@step2_Type').as('create-job.2-type');
+						
+						this.route('/:category/vast/:type', 'CreateJob@step3_Permanent').as('create-job.3-job-permanent');
+						this.route('/:category/:type', 'CreateJob@step3_Temporary').as('create-job.3-job-temporary');
+
+						this.route('/:category/vast/:type/bevestiging/:job', 'CreateJob@step4_Complete_Permanent').as('create-job.4-complete-temporary');
+						this.route('/:category/:type/bevestiging/:job', 'CreateJob@step4_Complete_Temporary').as('create-job.4-complete-temporary');
+
+
+					});
+
+				});
+					
+
+
+
+				/////////////////////////
+				// Employee JOB routes //
+				/////////////////////////
+
+				this.group({ moduleMinimumLevel: 10 }, function() {
+
+					///////////////
+					// Temporary //
+					///////////////
+
+					// Index, show, edit
+					this.route('/medewerker/aanvraag', 'Employee.Job@index').as('employee.job.index').acceptQuery().nest(function() {
+
+						this.route('/:jobId', 'Employee.Job@show').as('..show').nest(function() {
+
+							this.route('/wijzigen', 'Employee.Job@edit').as('..edit');
+							this.route('/annuleren', 'Employee.Job@cancel').as('..cancel');
+							this.route('/heractiveren', 'Employee.Job@reactivate').as('..reactivate');
+							this.route('/kopieren', 'Employee.Job@copy').as('..copy');
+
+							// Proposals
+							this.route('/voorstel/nieuw', 'Employee.JobProposal@create').as('..proposal.create');
+							this.route('/voorstel/:proposalId', 'Employee.JobProposal@show').as('..proposal.show');
+
+							// Bookings
+							this.route('/boeking-maken', 'Employee.JobBooking@create').as('..booking.create');
+							this.route('/boeking/:bookingId', 'Employee.JobBooking@edit').as('..booking.edit');
+							this.route('/voorstel/:proposalId/boeking-maken', 'Employee.JobBooking@create').as('..booking.from-proposal');
+							
+							// Broadcasts
+							this.route('/oproep/nieuw', 'Employee.JobBroadcast@create').as('..broadcast.create');
+
+						});
+									
+						
+					});
+
+					///////////////
+					// Permanent //
+					///////////////
+
+					this.route('/medewerker/vaste-aanvraag', 'Employee.PermanentJob@index').as('employee.permanent-job.index').acceptQuery().nest(function() {
+
+						this.route('/:permanentJobId', 'Employee.PermanentJob@show').as('..show').nest(function() {
+
+							this.route('/reactie/:applicationId', 'Employee.PermanentJob@showApplication').as('..show-application');
+
+							this.route('/proefperiode-boeken', 'Employee.PermanentJob@createTrialPeriod').as('..create-trial-period');							
+							this.route('/proefperiode-boeken/:applicationId', 'Employee.PermanentJob@createTrialPeriod').as('..create-trial-period-from-application');
+							
+							this.route('/wijzigen', 'Employee.PermanentJob@edit').as('..edit');							
+							this.route('/annuleren', 'Employee.PermanentJob@cancel').as('..cancel');
+							this.route('/heractiveren', 'Employee.PermanentJob@reactivate').as('..reactivate');
+							
+							
+						});
+
+
+					});
+
+
+				});
+
+				////////////////////////
+				// Client JOBS routes //
+				////////////////////////
+
+				this.group({ moduleMinimumLevel: 8 }, function() {
+
+					// Proposals
+					
+					// Jobs
+					this.route('/klant/aanvraag/:jobId', 'Client.Job@show').as('client.job.show').nest(function() {
+												
+						this.route('/voorstel/:proposalId', 'Client.JobProposal@show').as('..proposal');
+
+					});
+
+				});
+
+
+				///////////////////////////
+				// Candidate JOBS routes //
+				///////////////////////////
+
+				this.route('/kandidaat/vind-tijdelijk-werk/:jobId', 'Candidate.Job@show').as('candidate.job.show').constrain('jobId', /^\d+$/);
+				this.route('/kandidaat/vind-tijdelijk-werk/:filter', 'Candidate.Job@index').as('candidate.job.index');
+				
+				this.route('/kandidaat/vind-een-vaste-baan/:jobId', 'Candidate.PermanentJob@show').as('candidate.permanent-job.show').constrain('jobId', /^\d+$/);
+				this.route('/kandidaat/vind-een-vaste-baan/:filter', 'Candidate.PermanentJob@index').as('candidate.permanent-job.index');
+				
+					
+			});
+			
+			
+			// ██████╗ ██████╗  ██████╗ ███████╗██╗██╗     ███████╗███████╗
+			// ██╔══██╗██╔══██╗██╔═══██╗██╔════╝██║██║     ██╔════╝██╔════╝
+			// ██████╔╝██████╔╝██║   ██║█████╗  ██║██║     █████╗  ███████╗
+			// ██╔═══╝ ██╔══██╗██║   ██║██╔══╝  ██║██║     ██╔══╝  ╚════██║
+			// ██║     ██║  ██║╚██████╔╝██║     ██║███████╗███████╗███████║
+			// ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝
+			//                                                             
+			this.group({ moduleKey: 'profiles' }, function() {
+
+				//////////////////////////
+				// Admin PROFILE routes //
+				//////////////////////////
+
+				this.route('/medewerker/profielen', 'Employee.Profile@index').as('employee.profile.index').nest(function() {
+
+					this.route('/kandidaten', 'Employee.Profile@candidateIndex').as('employee.profile.candidate');
+					this.route('/opdrachtgevers', 'Employee.Profile@clientIndex').as('employee.profile.client');
+					this.route('/medewerkers', 'Employee.Profile@employeeIndex').as('employee.profile.employee');
+					this.route('/overig', 'Employee.Profile@otherIndex').as('employee.profile.other');
+					this.route('/incompleet', 'Employee.Profile@incompleteIndex').as('employee.profile.incomplete');
+
+					this.route('/:profileId', 'Employee.Profile@show').as('employee.profile.show');
+
+					this.route('/:profileId/uren', 'Employee.ProfileDeclaration@index').as('employee.profile.declaration.index');
+
+					editProfileRoutes(this, '/:profileId/wijzigen', 'employee.profile.edit');
+
+				});
+
+
+			});
+
+
+			// ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗███╗   ██╗ ██████╗     ████████╗██╗███╗   ███╗███████╗███████╗██╗      ██████╗ ████████╗███████╗
+			// ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║████╗  ██║██╔════╝     ╚══██╔══╝██║████╗ ████║██╔════╝██╔════╝██║     ██╔═══██╗╚══██╔══╝██╔════╝
+			// ██████╔╝██║   ██║██║   ██║█████╔╝ ██║██╔██╗ ██║██║  ███╗       ██║   ██║██╔████╔██║█████╗  ███████╗██║     ██║   ██║   ██║   ███████╗
+			// ██╔══██╗██║   ██║██║   ██║██╔═██╗ ██║██║╚██╗██║██║   ██║       ██║   ██║██║╚██╔╝██║██╔══╝  ╚════██║██║     ██║   ██║   ██║   ╚════██║
+			// ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██║██║ ╚████║╚██████╔╝       ██║   ██║██║ ╚═╝ ██║███████╗███████║███████╗╚██████╔╝   ██║   ███████║
+			// ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝    ╚═╝   ╚══════╝
+			//                                                                                                                                      
+
+			
+			//////////////////
+			// Admin routes //
+			//////////////////
+			
+			this.group({ moduleKey: 'jobs', moduleMinimumLevel: 10 }, function() {
+			
+				this.route('/medewerker/rooster', 'Employee.JobTimeslot@index').as('employee.job-timeslot.index').acceptQuery();
+
+			});
+
+			
+			///////////////////
+			// Client routes // 
+			///////////////////
+
+			this.group({ moduleKey: 'jobs', moduleMinimumLevel: 8 }, function() {
+				
+				this.route('/klant/rooster', 'Client.JobTimeslot@index').as('client.job-timeslot.index').acceptQuery();
+
+			});
+
+
+
+			// ████████╗ █████╗ ███████╗██╗  ██╗███████╗
+			// ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝██╔════╝
+			//    ██║   ███████║███████╗█████╔╝ ███████╗
+			//    ██║   ██╔══██║╚════██║██╔═██╗ ╚════██║
+			//    ██║   ██║  ██║███████║██║  ██╗███████║
+			//    ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝
+			//                                          
+
+			this.group({ moduleKey: 'tasks' }, function() {
+
+				this.route('/planning', 'Employee.Planning@index').as('employee.planning.index').acceptQuery().nest(function() {
+					
+					this.route('/:task', 'Employee.Planning@show').as('employee.planning.show');
+
+				});
+				
+
+			});
+
+
+			// ███████╗██╗   ██╗██████╗ ██╗   ██╗███████╗██╗   ██╗███████╗
+			// ██╔════╝██║   ██║██╔══██╗██║   ██║██╔════╝╚██╗ ██╔╝██╔════╝
+			// ███████╗██║   ██║██████╔╝██║   ██║█████╗   ╚████╔╝ ███████╗
+			// ╚════██║██║   ██║██╔══██╗╚██╗ ██╔╝██╔══╝    ╚██╔╝  ╚════██║
+			// ███████║╚██████╔╝██║  ██║ ╚████╔╝ ███████╗   ██║   ███████║
+			// ╚══════╝ ╚═════╝ ╚═╝  ╚═╝  ╚═══╝  ╚══════╝   ╚═╝   ╚══════╝
+			//                                                            
+			
+			this.group({moduleKey: 'surveys' }, function () {
+
+				///////////////////////////
+				// COMPANY survey routes //
+				///////////////////////////				
+				
+				this.route('/klant/enquete/:surveyResponseId', 'Client.SurveyResponse@show').as('client.survey-response.show');
+
+
+				/////////////////////////
+				// Admin SURVEY routes //
+				///////////////////////// 
+
+				this.group({ moduleMinimumLevel: 10 }, function() {
+
+					this.route('/medewerker/enquetes', 'Employee.Survey@index').as('employee.survey.index').nest(function() {
+
+						this.route('/:surveyKey', 'Employee.Survey@show').as('employee.survey.show');
+
+					});
+
+				});
+
+			});
+			
+
+			// ███████╗████████╗ █████╗ ████████╗██╗███████╗████████╗██╗ ██████╗███████╗
+			// ██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██║██╔════╝╚══██╔══╝██║██╔════╝██╔════╝
+			// ███████╗   ██║   ███████║   ██║   ██║███████╗   ██║   ██║██║     ███████╗
+			// ╚════██║   ██║   ██╔══██║   ██║   ██║╚════██║   ██║   ██║██║     ╚════██║
+			// ███████║   ██║   ██║  ██║   ██║   ██║███████║   ██║   ██║╚██████╗███████║
+			// ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚═╝╚══════╝   ╚═╝   ╚═╝ ╚═════╝╚══════╝
+			//                                                                          
+
+			this.group({moduleKey: 'statistics'}, function() {
+
+				this.route('/medewerkers/statistieken', 'Employee.Statistics@index').as('employee.statistics.index').nest(function() {
+
+					this.route('/praktijken', 'Employee.Statistics@companies').as('..companies');
+
+				});
+
+			});
+
+
+			//TODO: limit this to admins or you own 'employer page'
+			//this.route('/werkgever/:profileId', { page: 'Client@show'});
+
+			
+			//  ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ███╗   ██╗██╗███████╗███████╗
+			// ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗████╗  ██║██║██╔════╝██╔════╝
+			// ██║     ██║   ██║██╔████╔██║██████╔╝███████║██╔██╗ ██║██║█████╗  ███████╗
+			// ██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██╔══██║██║╚██╗██║██║██╔══╝  ╚════██║
+			// ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ██║  ██║██║ ╚████║██║███████╗███████║
+			//  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚══════╝
+			//                                                                          
+
+			this.route('/praktijk-inschrijven', 'Client.Company@create').as('client.company.create');
+
+			this.group({ moduleKey: 'companies' }, function() {
+
+				//////////////////////////
+				// Admin COMPANY routes //
+				//////////////////////////
+
+				this.group({ moduleMinimumLevel: 10 }, function() {
+
+					this.route('/medewerker/praktijken/', 'Employee.Company@index').as('employee.company.index').nest(function() {
+
+						this.route('/:companyId', 'Employee.Company@show').as('employee.company.show');
+						this.route('/:companyId/samenvoegen', 'Employee.Company@merge').as('employee.company.merge');
+
+						editCompanyRoutes(this, '/:companyId/wijzigen', 'employee.company.edit');
+
+					});
+
+				});
+
+				
+
+				///////////////////////////
+				// Client COMPANY routes //
+				///////////////////////////
+
+				this.route('/klant/praktijk/:companyId', 'Client.Company@show').as('client.company.show').nest(function() {
+
+					editCompanyRoutes(this, '/wijzigen', 'client.company.edit');
+
+				});
+
+
+			});
+
+
+			// ██╗   ██╗██████╗ ███████╗███╗   ██╗
+			// ██║   ██║██╔══██╗██╔════╝████╗  ██║
+			// ██║   ██║██████╔╝█████╗  ██╔██╗ ██║
+			// ██║   ██║██╔══██╗██╔══╝  ██║╚██╗██║
+			// ╚██████╔╝██║  ██║███████╗██║ ╚████║
+			//  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝
+			//                                    
+
+			this.group({ moduleKey: 'declarations' }, function() {
+
+				///////////////
+				// Candidate //
+				///////////////
+
+				this.route('/kandidaat/uren', 'Candidate.Declaration@index').as('candidate.declaration.index').nest(function() {
+
+					this.route('/archief', 'Candidate.Declaration@archive').as('..archive');
+					
+
+				});
+
+				///////////
+				// Admin //
+				///////////
+
+				this.group({ moduleMinimumLevel: 10 }, function() {
+
+					this.route('/medewerker/uren', 'Employee.Declaration@index').as('employee.declaration.index').nest(function() {
+
+						
+						this.route('/regel/:declarationId', 'Employee.Declaration@edit').as('..edit');
+						this.route('/:paymentMethod', 'Employee.Declaration@index').as('..payment-method');
+					
+					});
+
+				});
+
+			});
+
+
+			// ███████╗ █████╗  ██████╗████████╗██╗   ██╗██████╗ ███████╗███╗   ██╗
+			// ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██║   ██║██╔══██╗██╔════╝████╗  ██║
+			// █████╗  ███████║██║        ██║   ██║   ██║██████╔╝█████╗  ██╔██╗ ██║
+			// ██╔══╝  ██╔══██║██║        ██║   ██║   ██║██╔══██╗██╔══╝  ██║╚██╗██║
+			// ██║     ██║  ██║╚██████╗   ██║   ╚██████╔╝██║  ██║███████╗██║ ╚████║
+			// ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝
+			//                                                                     
+
+			this.group({ moduleKey: 'invoices' }, function() {
+
+				this.route('/medewerker/facturen', 'Employee.Invoice@index').as('employee.invoice.index').nest(function() {
+
+					this.route('/versturen-naar-exact', 'Employee.Invoice@export').as('employee.invoice.export');
+					this.route('/betaalstatus', 'Employee.Invoice@paymentStatus').as('employee.invoice.payment-status');
+
+				});
+
+			});
+
+
+
+			///////////////
+			// Dashboard //
+			///////////////
+
+			this.route('/dashboard', 'Dashboard@show').as('dashboard');
+			
+
+			// ███╗   ███╗██╗     ██╗███╗   ██╗    ██╗  ██╗██╗  ██╗
+			// ████╗ ████║██║     ██║████╗  ██║    ██║  ██║██║  ██║
+			// ██╔████╔██║██║     ██║██╔██╗ ██║    ███████║███████║
+			// ██║╚██╔╝██║██║██   ██║██║╚██╗██║    ██╔══██║██╔══██║
+			// ██║ ╚═╝ ██║██║╚█████╔╝██║ ╚████║    ██║  ██║██║  ██║
+			// ╚═╝     ╚═╝╚═╝ ╚════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═╝  ╚═╝
+			//                                                     
+
+			editProfileRoutes(this, '/mijn-profiel', 'my-profile');
+
+			this.route('/kandidaat/mijn-planning', 'Candidate.My@showMyPlanning').as('candidate.planning');
+			this.route('/kandidaat/mijn-planning/verleden', 'Candidate.My@showMyPlanningPast').as('candidate.planning.past');
+
+			this.route('/kandidaat/mijn-agenda', 'Candidate.Calendar@show').as('candidate.calendar');
+			
+
+			
+			// ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗
+			// ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝
+			// ███████╗█████╗     ██║      ██║   ██║██╔██╗ ██║██║  ███╗███████╗
+			// ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║
+			// ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║
+			// ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
+			//                                                                 
+
+			this.route('/admin', 'Dashboard@show').nest(function() {
+
+				this.group({ moduleKey: 'module-rights' }, function() {
+
+					this.route('/rechten', 'Employee.ModuleRight@index').as('employee.module-right.index').nest(function() {
+						this.route('/:profileType', 'Employee.ModuleRight@show').as('employee.module-right.show');
+					});
+
+				});
+
+				this.group({ moduleKey: 'settings'}, function() {
+
+					this.route('/instellingen', 'Employee.Settings@index').as('employee.settings.index').nest({ viewContainer: 'settings-page' }, function() {
+
+						this.route('/', 'Employee.RepresentativeSetting@index').as('employee.settings.index');
+						this.route('/contactpersonen', 'Employee.RepresentativeSetting@index').as('employee.settings.representative.index').nest(function() {
+
+							this.route('/nieuw', 'Employee.RepresentativeSetting@create').as('..create');
+							this.route('/:id', 'Employee.RepresentativeSetting@edit').as('..edit');
+
+						});
+
+						this.route('/exact', 'Employee.Settings@exact').as('employee.settings.exact');
+
+		
+					});
+					
+
+				});
+
+			});
+
+
+
+		});
+
+	});
+
+
+	// Error 404 catch
+	this.catchAll('error.404');
+
+
+	////////////
+	// Errors //
+	////////////
+
+
+	// Routing errors
+	this.errorRoute('router.403', { main: 'App@layout', page: 'App@errorForbidden' });
+
+
+	// Api errors
+	this.handleErrors('api', (action, apiError) => {
+
+		// 404?
+		if (apiError.xhrError.status === 404) {
+
+			// Show 404 page.
+			return Chicken.view('error.404');
+			
+		}
+
+		return Chicken.view('error.api', function() {
+			this.with({
+				error: apiError.getMessage()
+			});
+		});
+
+	});
+
+	// // Javascript errors
+	// this.handleErrors('js', (action, error) => {
+
+	// 	// Do we have an error?
+	// 	if (!error) { 
+	// 		error = new Error('Unknown error');
+	// 	}
+		
+	// 	// Parse stack
+	// 	let stack = ErrorStackParser.parse(error);
+
+	// 	return Chicken.view('error.js', function() {
+	// 		this.with({
+	// 			error: error.toString(),
+	// 			stack: stack
+	// 		});
+	// 	});
+
+	// });
+
+
+});
+
+</Script>
