@@ -1,1 +1,1 @@
-import './Component.chk';
+import './Component.js';

@@ -32,7 +32,7 @@ class HandlebarsAsset extends HTMLAsset {
 
     constructor(name, pkg, options) {
         super(name, pkg, options);  
-        this.type = 'html';
+        this.type = 'js';
 
         this.assetMap = new Map();
 
@@ -124,7 +124,7 @@ class HandlebarsAsset extends HTMLAsset {
     
 
     async postProcess(generated) {
-
+      
         // Do a replace for each asset
         let code = this.contents;
         this.assetMap.forEach((asset, path) => {
@@ -133,12 +133,19 @@ class HandlebarsAsset extends HTMLAsset {
             
         })
         
+        
         // Remove extra spaces
         code = code.replace(/[\n\r]+/g, '');
         code = code.replace(/[\s]{2,}/g, ' ').trim();
+        
+        // What's my name?
+
+
+        // Store in cache
+        code = `module.exports = \`${code}\`;`;
 
         return [{
-            type: 'html',
+            type: 'js',
             value: code,
             map: null
         }];

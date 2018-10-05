@@ -24,7 +24,7 @@ describe('Parcel Chicken plugin', function() {
       // Compare bundle to expected
       assertBundleTree(bundle, {
         type: 'js',
-        assets: ['Component.chk', 'index.js']
+        assets: ['Component.js', 'index.js']
       });
     });
   });
