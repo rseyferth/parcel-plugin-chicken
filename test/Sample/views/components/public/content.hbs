@@ -1,0 +1,64 @@
+{{#if imageLeft}}
+    <div class="content-image left">
+        <img src={{image.url}} alt={{image.alt}}>
+    </div>
+{{/if}}
+{{#if imageTop}}
+    <div class="content-image top">
+        <img src={{image.url}} alt={{image.alt}}>
+    </div>
+{{/if}}
+<div class="{{if (either imageLeft imageRight) "content-group" ""}}{{contentClass}}">
+
+    {{#if title}}
+        <header>
+            <h2>{{{title}}}</h2>
+        </header>
+    {{/if}}
+    <article>
+        
+        {{#if html}}
+            {{{html}}}
+        {{else}}
+            <br>
+        {{/if}}
+
+        {{#if quote}}
+            <blockquote>{{{quote}}}</blockquote>
+        {{/if}}
+
+        {{#if imageBottom}}
+            <div class="content-image bottom">
+                <img src={{image.url}} alt={{image.alt}}>
+            </div>
+        {{/if}}
+
+        {{#if button}}
+            <a href={{button.url}} class="ui orange link button" title={{button.caption}}>
+                {{button.caption}}
+            </a>
+        {{/if}}
+
+        {{#if buttons}}
+        
+            <div class="ui stackable two column grid">
+                {{#each buttons as |obj|}}
+                    <div class="column">
+                        {{#if obj.route}}
+                            <a {{linkTo obj.route}} class="ui basic white fluid button no-margin" title={{obj.caption}}>{{obj.caption}}</a>
+                        {{/if}}
+                    </div>						
+                {{/each}}					
+            </div>
+
+        {{/if}}
+
+
+    </article>
+
+</div>
+{{#if imageRight}}
+    <div class="content-image right">
+        <img src={{image.url}} alt={{image.alt}}>
+    </div>
+{{/if}}

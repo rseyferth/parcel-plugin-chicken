@@ -1,0 +1,17 @@
+<hh-content-page attributes={{pageAttributes}}>
+</hh-content-page>
+
+<div class="ui grey background">
+	<div class="ui container">
+		<steps-header key="{{key}}" current={{current}} />
+	</div>
+</div>
+
+<div class="ui container centered grid">
+
+	<div class="{{tabletWidth}} wide tablet {{width}} wide computer column main-content">
+
+		{{yield}}
+
+	</div>
+</div>

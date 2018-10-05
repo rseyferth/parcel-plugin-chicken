@@ -1,0 +1,19 @@
+{{#unless hidden}}
+	{{#each path as |crumb index|}}
+
+		{{#unless (equal index (subtract (count path) 1))}}
+			
+			<a class="section" {{link crumb.uri}}>
+				{{crumb.title}}
+			</a>
+			<i class="right chevron icon divider"></i>
+
+		{{else}}
+
+			<div class="active section">{{crumb.title}}</div>
+		
+		{{/unless}}
+
+
+	{{/each}}
+{{/unless}}

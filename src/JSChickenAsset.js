@@ -1,8 +1,12 @@
 const { Asset } = require('parcel-bundler');
+const objectHash = require('parcel-bundler/lib/utils/objectHash');
+const HandlebarsAsset = require('./HandlebarsAsset');
+
 const { kebabCase } = require('lodash');
 const cheerio = require('cheerio');
 const path = require('path');
 const fs = require('parcel-bundler/lib/utils/fs');
+const nativeFs = require('fs');
 const xml2js = require('xml2js');
 const { each } = require('lodash');
 
@@ -28,6 +32,7 @@ class JSChickenAssets extends Asset {
 
          // Find and replace any <template></template> and <template src/>
          let js = this.contents;
+         let map = this.contents;
          let templates = '';
          let script = '';
          let match;
@@ -58,7 +63,7 @@ class JSChickenAssets extends Asset {
              if (!templateKey) {
  
                  // Use path
-                 let parts = templateSource.replace(/\.jsc$/i, '').split(/\//);
+                 let parts = templateSource.replace(/\.hbs$/i, '').split(/\//);
  
                  // Add on until we reach root
                  let keyParts = [];
@@ -69,55 +74,35 @@ class JSChickenAssets extends Asset {
                  }
                  
                  templateKey = keyParts.join('.');
+                 
  
              }
  
-             // Load it
-             var templatePath = path.resolve(path.dirname(this.name), templateSource);
-             if (!/\.hbs$/.test(templatePath)) templatePath = `${templatePath}.hbs`; 
+             // Load template
+             templates += await this.loadTemplate(templateSource, templateKey)
              
-             let str = await fs.readFile(templatePath, this.encoding);
- 
-             // Template
-             str = str.replace(/[\n\r]+/g, '');
-             str = str.replace(/[\s]{2,}/g, '').trim();
- 
-             // Add to template
-             templates += `Chicken.Dom.View.TemplateCache.set('${templateKey}', \`${str}\`);`;
-         
  
         }
 
         // Remove it from original
         js = js.replace(TemplateSelfClosingRegex, '');
 
-
         // Find all top-level tags
         while (match = TemplateRegex.exec(js)) {
 
             // Which one
-            let [, tag, attrs, code] = match;
+            let [complete, tag, attrs, code] = match;
             switch (tag) {
 
                 case 'Template':
 
                     // Template
-                    code = code.replace(/[\n\r]+/g, '');
-                    code = code.replace(/[\s]{2,}/g, '').trim();
+                    code = await this.processTemplate(code)
 
                     // Key?
-                    let attr;
-                    let templateKey = false;
-                    while (attrs && (attr = AttributeRegex.exec(attrs))) {
-                        
-                        let [, key,,, value] = attr;
-                        if (key.toLowerCase() === 'key') {
-                            templateKey = value; 
-                            break;
-                        }
-
-                    }
-
+                    let $ = cheerio(complete);
+                    let templateKey = $.attr('key');
+                    
                     // No template key?
                     if (!templateKey) {
 
@@ -126,7 +111,7 @@ class JSChickenAssets extends Asset {
                         templateKey = kebabCase(parts[parts.length - 1]);
 
                     }
-
+                    
                     // Add to template
                     templates += `Chicken.Dom.View.TemplateCache.set('${templateKey}', \`${code}\`);`;
                     break;
@@ -140,69 +125,71 @@ class JSChickenAssets extends Asset {
 
         }
 
-
         return [{
             type: 'js',
-            value: script + templates
+            value: script + templates,
+            map: script + templates
         }]
 
 
        
 
-      
-        while (match = TemplateRegex.exec(js)) {
-            
-            // Template
-            let str = match[2];
-            str = str.replace(/[\n\r]+/g, '');
-            str = str.replace(/[\s]{2,}/g, '').trim();
+    }
 
-            // Key?
-            let attrs = match[1];
-            let attr;
-            let templateKey = false;
-            while (attrs && (attr = AttributeRegex.exec(attrs))) {
-                
-                let [, key,,, value] = attr;
-                if (key.toLowerCase() === 'key') {
-                    templateKey = value; 
-                    break;
-                }
 
-            }
+    async loadTemplate(uri, templateKey) {
+        
+        
+        // Resovle path
+        var templatePath = path.resolve(path.dirname(this.name), uri);
+        if (!/\.hbs$/.test(templatePath)) templatePath = `${templatePath}.hbs`;
+        
+        // Add dependency
+        this.addDependency(templatePath, {
+             includedInParent: true
+        });
 
-            // No template key?
-            if (!templateKey) {
+        // Read file
+        let str = await fs.readFile(templatePath, this.encoding);
 
-                // Use path
-                let parts = this.name.replace(/\.jsc$/i, '').split(/\//);
-                templateKey = kebabCase(parts[parts.length - 1]);
+        // Template
+        str = await this.processTemplate(str, templatePath);
 
-            }
+        // Add to template
+        return `Chicken.Dom.View.TemplateCache.set('${templateKey}', \`${str}\`);`;
 
-            // Add to template
-            templates += `Chicken.Dom.View.TemplateCache.set('${templateKey}', \`${str}\`);`;
-            
-        }
+    }    
 
-        // Remove it from original
-        js = js.replace(TemplateRegex, '');
+    async processTemplate(str, url = this.name) {
 
-      
+        
+        // As HTML
+        let html = new HandlebarsAsset(url, this.options);
+        html.contents = str;
 
-        // Prepend templates
-        js = templates + js;
+        // Inject and replace assets
+        await html.process();
+        let result = await html.postProcess([]);
+        str = result[0].value;
+        
+        html.dependencies.forEach((dep, key) => {
 
-        return [
-            {
-                type: 'js',
-                value: js
-            }
-        ]
+            this.dependencies.set(key, dep);
 
+        });
+        
+        // Remove extra spaces
+        str = str.replace(/[\n\r]+/g, '');
+        str = str.replace(/[\s]{2,}/g, ' ').trim();
+
+
+        return str;
 
     }
 
+    generateHash() {
+        return objectHash(this.generated);
+    }
     
 
 }

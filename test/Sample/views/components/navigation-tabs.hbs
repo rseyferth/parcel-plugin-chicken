@@ -1,0 +1,6 @@
+{{#each items as |item|}}
+    <a {{linkTo item.route}} class="item">
+        <i class="{{item.icon}} icon"></i>
+        {{item.title}}
+    </a>
+{{/each}}

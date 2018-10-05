@@ -1,0 +1,43 @@
+<div class="active">
+
+    {{#unless activeTasks}}
+        <p class="empty">{{l "no-tasks"}}</p>
+    {{/unless}}
+    {{#each activeTasks as |task|}}
+        
+        <hh-planning-task task={{task}} task-id={{task.id}}
+            allow-links={{allowCardLinks}}
+            show-assigned-to={{showAssignedTo}}
+            show-due-date={{showDueDate}}
+            draggable={{allowDragDrop}}
+            class="selectable"
+            on-click-action="clickTask" />
+        
+    {{/each}}
+
+</div>
+
+{{#if completedTasks}}
+
+    <div class="completed">
+        
+        <h4 class="ui header">{{l "completed-tasks"}}</h4>
+        <div class="ui list">
+
+            {{#each completedTasks as |task|}}
+
+                <div class="ui item">
+                    <a href="#" {{action "gotoTaskable" task}}>
+                        <i class="{{task.taskableIcon}} icon"></i>
+                        {{task.taskableTitle}}
+                    </a>
+                    {{task.title}}
+                </div>                                            
+
+            {{/each}}
+
+        </div>
+    
+    </div>
+
+{{/if}}

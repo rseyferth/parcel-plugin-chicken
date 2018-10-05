@@ -1,0 +1,34 @@
+<button class="{{ buttonClass }}" {{action "showModal"}}>
+	{{#if buttonIcon}} <i class="{{buttonIcon}} icon"></i> {{/if}}
+	{{buttonTitle}}
+</button>
+
+<div class="ui modal small confirm-button-modal">
+	<div class="ui icon header">
+		{{#if buttonIcon}}			
+			<i class="{{buttonIcon}} icon"></i>
+		{{/if}}
+		{{#if buttonTitle}}
+			<div class="header">{{buttonTitle}}</div>
+		{{/if}}
+	</div>
+	
+	<div class="content">	    
+	    <p>{{confirmText}}</p>
+	</div>
+	
+
+	<div class="actions">
+	    
+		<div class="ui cancel red button" {{action "doNegative"}}>
+			<i class="remove icon"></i>
+		    {{t 'words.no'}}
+		</div>
+		<div class="ui ok green button" {{action "doPositive"}}>
+		    <i class="checkmark icon"></i>
+		    {{t 'words.yes'}}
+		</div>
+		
+  </div>
+	
+</div>

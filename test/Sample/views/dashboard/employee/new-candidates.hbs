@@ -1,0 +1,26 @@
+<div class="content">
+
+	<div class="ui relaxed list">
+		{{#each profiles as |profile|}}
+			<a class="item" {{linkTo "employee.profile.show" profileId=profile.id}}>
+
+				<hh-profile-icon profile={{profile}} class="big icons icon" />
+				<div class="content">
+					<div class="header">{{profile.name}}</div>
+					<div class="description">
+						{{#if profile.primaryType}}
+							{{profile.primaryType.title}} - 
+						{{/if}}
+						{{profile.registeredSince}}						
+					</div>
+					
+				</div>
+
+
+			</a>
+		{{/each}}
+	</div>
+	
+	<button class="ui fluid primary button" {{linkTo "employee.profile.show"}}>{{l "button" count=(get profiles "page.recordCount")}}</button>
+
+</div>

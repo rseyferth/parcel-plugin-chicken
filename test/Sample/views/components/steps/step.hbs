@@ -1,0 +1,22 @@
+{{#if showBreadcrumb}}
+	<div class="ui container centered grid">
+		<div class="sixteen wide tablet sixteen wide computer column breadcrumb-container">
+			<hh-breadcrumb attributes={{attributes}} />			
+		</div>
+	</div>
+{{/if}}
+
+<div class="ui grey background">
+	<div class="ui container">
+		<hh-steps-header key="{{key}}" current={{current}} />
+	</div>
+</div>
+
+<div class="ui container centered grid">
+
+	<div class="{{tabletWidth}} wide tablet {{width}} wide computer column main-content">
+
+		{{yield}}
+
+	</div>
+</div>

@@ -1,0 +1,18 @@
+<div class="ui form">
+		
+	<ui-radio value={{filter.value}} class="inline fields">
+				
+		{{#each filter.options as |key v|}}
+			<div class="field">
+				
+				<div class="ui radio checkbox">
+					<input name="profile-type" type="radio" value={{v}}>
+					<label>
+						{{key}}
+					</label>
+				</div>
+			</div>
+		{{/each}}
+
+	</ui-radio>
+</div>

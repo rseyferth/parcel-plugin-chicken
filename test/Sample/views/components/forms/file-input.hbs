@@ -1,0 +1,86 @@
+<div class="input {{if showInput "" "hidden"}}">
+	<input type="file" accept={{accept}}>
+	<span class="message">
+		<span class="main">{{l "select-file"}}</span>
+		<span class="sub">
+			{{#if error}}
+				<span class="error">
+					{{#if (equal error "Type")}}
+						{{l (concat "error.type." type)}}						
+					{{else if (equal error "Size")}}
+						{{l "error.size" max=maxSize}}						
+					{{else}}
+						{{{error}}}
+					{{/if}}
+				</span>
+			{{else}}
+
+				{{#if type}}
+					{{l (concat "type-message." type)}}
+				{{/if}}
+
+			{{/if}}
+		</span>
+	</span>
+	
+</div>
+
+{{#if isUploading}}
+
+	<div class="ui small blue progress">
+		<div class="bar" style={{progressStyle}}></div>
+		<div class="label">{{l "uploading"}} ({{uploadProgress}} %)</div>
+	</div>
+
+{{else if value}}
+
+	{{#if loadingFileModel}}
+
+		<div class="loading"></div>
+
+	{{else if fileModel}}
+
+		<div class="file">
+			<i class="big {{fileModel.icon}} icon"></i>
+			<div class="details">
+				<span class="name">{{fileModel.originalFilename}}</span>
+				<span class="date">
+					{{momentFormat fileModel.createdAt "LLL"}}
+					&middot;
+					<a href={{fileModel.url}}>
+						{{l "download"}}
+					</a>
+				</span>				
+			</div>
+			<i class="trash icon" {{action "deleteFile"}}></i>
+
+			{{#if (both fileModel.isImage showImage)}}
+				<div class="image-preview">
+					<img src={{fileModel.url}}>
+				</div>
+
+			{{/if}}
+
+		</div>
+
+	{{/if}}
+
+
+
+{{/if}}
+
+<div class="ui cropper modal">
+	<i class="close icon"></i>
+	<div class="header">
+		{{l "cropper.title"}}
+	</div>
+	<div class="content" style="max-height: 480px;">
+
+	</div>
+	<div class="actions">
+		<div class="ui positive right labeled icon button">
+			{{l "cropper.ok"}}
+			<i class="checkmark icon"></i>
+		</div>
+	</div>
+</div>

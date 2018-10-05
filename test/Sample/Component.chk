@@ -1,3 +1,29 @@
+<Template src="./views/dashboard/show.hbs" />
+<Template src="./views/dashboard/generic/profile.hbs" />
+<Template src="./views/dashboard/candidate/declarations.hbs" />
+<Template src="./views/dashboard/candidate/find-job.hbs" />
+<Template src="./views/dashboard/candidate/find-permanent-job.hbs" />
+<Template src="./views/dashboard/candidate/mobile-app.hbs" />
+<Template src="./views/dashboard/candidate/my-calendar.hbs" />
+<Template src="./views/dashboard/candidate/my-planning.hbs" />
+<Template src="./views/dashboard/client/companies.hbs" />
+<Template src="./views/dashboard/client/create-company.hbs" />
+<Template src="./views/dashboard/client/create-job.hbs" />
+<Template src="./views/dashboard/client/my-jobs.hbs" />
+<Template src="./views/dashboard/client/new-proposals.hbs" />
+<Template src="./views/dashboard/client/roster.hbs" />
+<Template src="./views/dashboard/client/surveys.hbs" />
+<Template src="./views/dashboard/employee/active-jobs.hbs" />
+<Template src="./views/dashboard/employee/job-filters.hbs" />
+<Template src="./views/dashboard/employee/new-candidates.hbs" />
+<Template src="./views/dashboard/employee/new-clients.hbs" />
+<Template src="./views/dashboard/employee/profile-filters.hbs" />
+
+<Template src="./views/components/public/content.hbs" />
+<Template src="./views/components/public/header.hbs" />
+<Template src="./views/components/cookie-warning.hbs" />
+
+
 <Template src="./views/sub-dir/comp.hbs" />
 <Template>
 
@@ -25,15 +51,12 @@
 
 <Script>
 
-import Chicken from 'chickenjs';
-import ErrorStackParser from 'error-stack-parser';
-
 
 ////////////
 // Routes //
 ////////////
 
-Chicken.app.routes(function() {0
+Chicken.app.routes(function() {
 
 	// ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗
 	// ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝

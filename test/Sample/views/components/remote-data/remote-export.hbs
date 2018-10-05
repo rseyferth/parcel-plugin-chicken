@@ -1,0 +1,81 @@
+{{yield}}
+
+<a href="#" class="right item" {{action "showModal"}}>
+	<i class="file excel outline icon"></i>
+	{{l "export"}}
+</a>	
+
+<ui-modal id="modalExport" class="ui small modal"
+	 ui-auto-center=true ui-autofocus=false ui-closable=false>
+
+	<i class="close icon"></i>
+
+	<div class="header">
+		{{l "title"}}
+	</div>
+
+	{{#if _.isComplete}}
+
+		<div class="content">
+	
+			<p>{{l "complete.intro"}}</p>
+		
+		</div>
+		<div class="actions">
+			<button class="ui positive button" {{action "download"}}>
+				<i class="download icon"></i> {{l "actions.download"}}
+			</button>
+			<button class="ui cancel button">{{l "actions.close"}}</button>
+		</div>
+	
+	{{else if _.isExporting}}
+	
+		<div class="content">
+
+			<ui-progress class="green" value={{_.exportProgress}} ui-total="100" ui-show-activity=true>
+				<div class="bar">
+					<div class="progress"></div>
+				</div>
+				<div class="label">{{_._.exportStatus}}</div>
+			</ui-progress>
+
+		</div>
+			
+
+	
+
+	{{else}}
+
+		<div class="content">
+	
+			<p>{{l "intro"}}</p>
+
+			<form class="ui form">
+				<div class="field">
+				
+					{{!-- Dropdown --}}
+					<label>{{l "format.label"}}</label>
+					<ui-dropdown class="selection" value={{_.exportFormat}}>
+
+						<i class="dropdown icon"></i>
+						<div class="default text"></div>
+						<div class="menu">
+							{{#each _.formats as |format|}}
+								<div class="item" data-value={{format}}>{{l (concat "format." format)}}</div>
+							{{/each}}
+			 			</div>
+					</ui-dropdown>
+				</div>
+
+			</form>
+		</div>
+		<div class="actions">
+			<button class="ui primary button" {{action "export"}}>{{l "actions.export"}}</button>
+			<button class="ui cancel button">{{l "actions.cancel"}}</button>
+		</div>
+	
+	{{/if}}
+
+
+
+</ui-modal>

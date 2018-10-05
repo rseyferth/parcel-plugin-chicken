@@ -1,0 +1,76 @@
+<header class="{{if task.completedAt "completed" (if task.cancelledAt "cancelled" "")}}">
+    <div class="taskable">
+        <i class="{{task.taskableIcon}} icon"></i>
+        {{#if allowLinks}}
+            <a href="#" {{action "gotoTaskable"}}>{{task.taskableTitle}}</a>
+        {{else}}
+            {{task.taskableTitle}}
+        {{/if}}
+
+        {{!-- Prio --}}
+        {{#if task.priority}}
+            {{#if (gt task.priority 0)}}
+                <i class="red exclamation circle icon"></i>
+            {{else}}
+                <i class="green arrow down icon"></i>
+            {{/if}}
+        {{/if}}    
+    </div>
+    <div class="title">{{task.title}}</div>
+</header>
+<div class="content">
+    
+    <div class="labels">
+    
+        {{#each task.cardLabels as |label|}}
+
+            {{#if label.title}}
+
+                <div class="ui {{label.cssClass}} label" title={{label.title}}>
+                    {{#if label.icon}}
+                        <i class="{{label.icon}} icon"></i>
+                    {{/if}}
+                    {{maxLength label.title 36}}
+                    
+                    {{#if label.deletable}}
+                        <i class="delete icon" {{action "deleteLabel" label}}></i>
+                    {{/if}}
+                </div>
+
+            {{else if label.icon}}
+                <i class="{{label.icon}} icon"></i>
+            {{/if}}
+
+        {{/each}}
+
+        {{#if task.cancelledAt}}
+            <div class="ui red basic label">
+                <i class="trash icon"></i>
+                {{l "labels.cancelled"}}
+            </div>
+        {{/if}}
+
+        {{#if showDueDate}}
+            <div class="ui basic blue label">
+                <i class="calendar icon"></i>
+                {{momentFormat task.dueDate "LL"}}
+            </div>
+        {{/if}}
+        {{#if showAssignedTo}}
+            
+            {{#if task.assignedToProfileSummary}}
+                <div class="ui basic green label">
+                    <i class="user icon"></i>
+                    {{task.assignedToProfileSummary.firstName}}
+                </div>
+            {{/if}}
+        {{/if}}
+
+    </div>
+
+
+</div>
+
+{{#if task.is.busy}}
+    <i class="grey loading sync icon"></i>
+{{/if}}

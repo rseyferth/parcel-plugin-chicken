@@ -1,0 +1,9 @@
+{{#if headerSortKey}}
+	<div class="clickable" {{action "sort"}}>
+		<i class={{sortIcon}}></i>			
+		{{yield}}
+	</div>
+
+{{else}}
+	{{yield}}
+{{/if}}

@@ -1,0 +1,50 @@
+{{#unless settings.dismissed}}
+
+    <div class="nag-bar top">
+
+        <div class="ui header">{{l "title"}}</div>
+        {{{md (l "content")}}}
+        <div class="actions">
+
+            <a class="ui labeled icon button" {{action "settings"}}>
+                <i class="cog icon"></i>
+                {{l "configure"}}
+            </a>
+            <button class="ui positive labeled icon button" {{action "dismiss"}}>
+                <i class="checkmark icon"></i>
+                {{l "approve"}}
+            </button>
+
+        </div>
+
+    </div>
+
+{{!--     
+
+    <ui-modal id="modalCookieWarning" class="small" ui-closable=false>
+
+        <div class="header">
+            {{l "title"}}
+        </div>
+        <div class="content">
+
+            {{{md (l "content")}}}
+
+        </div>
+        <div class="actions">
+
+            <a {{linkTo "public.cookies"}} class="ui small labeled icon button">
+                <i class="cog icon"></i>
+                {{l "configure"}}
+            </a>
+            <button class="ui small positive approve labeled icon button">
+                <i class="checkmark icon"></i>
+                {{l "approve"}}
+            </button>
+
+        </div>
+
+
+    </ui-modal> --}}
+
+{{/unless}}

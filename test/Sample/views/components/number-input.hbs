@@ -1,0 +1,15 @@
+<div class="ui {{if rightLabel "right" ""}} {{if isLoading "right icon loading" ""}} fluid labeled input">
+	
+	{{#if isLoading}}
+		<i class="loading spinner icon"></i>
+	{{/if}}
+
+	{{#if leftLabel}}
+		<div class="ui label">{{leftLabel}}</div>
+	{{/if}}
+	<input type="text">
+	{{#if rightLabel}}
+		<div class="ui label">{{rightLabel}}</div>
+	{{/if}}
+
+</div>

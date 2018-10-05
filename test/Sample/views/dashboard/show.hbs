@@ -1,0 +1,53 @@
+<hh-breadcrumb hidden=true />
+<div class="ui dashboard container centered grid">
+
+	<div class="six wide column">
+
+			{{#each leftCards as |card|}} {{#unless card.hidden}}
+			
+			<div class="fluid dashboard-card">
+			
+				<dashboard-card attributes={{card}} icon={{t (concat card.view ".icon")}} corner-icon={{t (concat card.view ".corner-icon") false}} title={{t (concat card.view ".title") card=card}}>
+				</dashboard-card>
+			</div>
+		
+		{{/unless}} {{/each}}
+
+	</div>
+	<div class="ten wide column">
+
+		{{#each rightCards as |card|}} {{#unless card.hidden}}
+		
+			<div class="fluid dashboard-card">
+			
+				<dashboard-card attributes={{card}} icon={{t (concat card.view ".icon")}} corner-icon={{t (concat card.view ".corner-icon") false}} title={{t (concat card.view ".title") card=card}}>
+				</dashboard-card>
+			</div>
+			
+		{{/unless}} {{/each}}
+
+	</div>
+	
+</div>
+
+{{#if (both user.profile.isCandidate (either (not user.profile.addressId) (not user.profile.addressLatitude)))}}
+
+	<ui-modal id="noAddressModal" class="small" ui-closable=false>
+
+		<div class="header">
+			{{l "no-address.title"}}
+		</div>
+		<div class="content">
+			<p>{{l "no-address.text"}}</p>
+
+			{{#if user.profile.isWaarnemer}}
+				<p>{{l "no-address.waarnemer"}}</p>
+			{{/if}}
+		</div>
+		<div class="actions">
+			<div class="ui positive button">{{l "no-address.button"}}</div>
+		</div>
+
+	</ui-modal>
+
+{{/if}}

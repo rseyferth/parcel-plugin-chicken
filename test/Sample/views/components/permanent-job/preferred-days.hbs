@@ -1,0 +1,29 @@
+<table class="ui preferred-days definition table {{if editable "" "disabled"}}">
+	<thead>
+		<tr>
+			<th></th>
+			{{#each days as |day|}}
+				<th>{{day.title}}</th>
+			{{/each}}
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{l "morning"}}</td>
+			{{#each days as |day|}}
+				<td {{action "toggle" day "morning"}} class={{if day.morningSelected "selected selectable day-part" "selectable day-part"}}>
+					<i class={{if day.morningSelected "thumbs up icon" "thumbs down icon"}}></i>
+				</td>
+			{{/each}}
+		</tr>
+		<tr>
+			<td>{{l "afternoon"}}</td>
+			{{#each days as |day|}}
+				<td {{action "toggle" day "afternoon"}} class={{if day.afternoonSelected "selected selectable day-part" "selectable day-part"}}>
+					<i class={{if day.afternoonSelected "thumbs up icon" "thumbs down icon"}}></i>
+				</td>
+			{{/each}}
+		</tr>
+	</tbody>
+
+</table>

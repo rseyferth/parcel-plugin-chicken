@@ -1,0 +1,17 @@
+<div class="content">
+
+	<div class="ui very relaxed divided list">
+		
+		{{#each proposals as |proposal|}}
+			<div class="item">
+
+				<p>{{{l "intro" title=proposal.job.typeTitle dates=proposal.job.formattedDates}}}</p>
+				<p><em style="white-space: nowrap;">{{momentFormat proposal.createdAt "LLL"}}</em></p>
+
+				<button class="ui margined fluid primary button" {{linkTo "client.job.proposal" companyId=proposal.job.companyId jobId=proposal.jobId proposalId=proposal.id}}>{{l "button"}}</button>
+			</div>
+
+		{{/each}}
+
+	</div>
+</div>

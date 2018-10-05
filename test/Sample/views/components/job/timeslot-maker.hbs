@@ -1,0 +1,269 @@
+{{#if rateErrors}}
+	{{#each rateErrors as |error|}}
+		<div class="ui error message">
+			<div class="content">
+				<div class="header">{{l "error.rate"}}</div>
+				<p>{{error}}</p>
+			</div>
+		</div>
+	{{/each}}
+{{/if}}
+
+<div class="ui centered stackable grid">
+
+	{{#if showCalendar}}
+		<div class="eight wide column">
+		
+			<hh-full-calendar id="calendar" 
+				fc-default-date={{calendarDate}}
+				fc-height="auto" 
+				fc-day-click="calendarSelectDay" 
+				fc-all-day-default=true></hh-full-calendar>
+
+		</div>
+	{{/if}}
+
+	{{#if showWeekdays}}
+		<div class="eight wide column">
+			
+			<h3 class="ui center aligned header">{{l "week-times"}}</h3>
+
+			<table class="ui hh table">
+				<thead>
+					<tr>
+						<th>{{t "words.day"}}</th>
+						<th>{{t "words.start-time"}}</th>
+						<th>{{t "words.end-time"}}</th>
+						{{#if (method job.type "hasTimeslotAttribute" "minutesBreaktime")}}
+							<th width="33%">{{t "words.minutes-breaktime"}}</th>
+						{{/if}}
+					</tr>
+				</thead>
+				<tbody>
+					{{#each weekDays as |day|}}
+					<tr>
+						<td width="25%">{{ day.friendlyDayOfWeek }}</td>
+						<td class="time">
+							<hh-time-input class="fluid" value={{day.from}} />
+						</td>
+						<td class="time">
+							<hh-time-input class="fluid" value={{day.until}} />
+						</td>
+						{{#if (method job.type "hasTimeslotAttribute" "minutesBreaktime")}}						
+							<td class="minutes">
+								<div class="ui right labeled minutes-breaktime input">
+									<input type="number" value={{day.minutesBreaktime}} step="15" min="0" max="60">
+									<div class="ui label">{{t "words.minutes-short"}}</div>
+								</div>								
+							</td>
+						{{/if}}
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+
+		</div>
+	{{/if}}
+
+	{{#if timeslots}}
+		<div class="sixteen wide column vertically-spaced">
+			
+			<p>{{l "timeslots-info"}}</p>
+
+			<table class="ui striped compact table">
+				<thead>
+					<th>{{t "attributes.job.timeslot.date"}}</th>
+					<th>{{t "attributes.job.timeslot.day-of-week"}}</th>
+					{{#if $.job.isBooked}}
+						<th>{{t "attributes.job.bookings"}}</th>						
+					{{/if}}
+					<th>{{t "attributes.job.timeslot.start-time"}}</th>
+					<th>{{t "attributes.job.timeslot.end-time"}}</th>
+					{{#if (method job.type "hasTimeslotAttribute" "minutesBreaktime")}}
+						<th>{{t "attributes.job.timeslot.minutes-breaktime"}}</th>
+					{{/if}}
+					{{#if (both user.profile.isEmployee (method job.type "hasTimeslotAttribute" "minutesUnbillable"))}}
+						<th>{{t "attributes.job.timeslot.minutes-unbillable"}}</th>
+					{{/if}}
+					<th>{{t "attributes.job.timeslot.number-of-hours"}}</th>
+					{{#if (method job.type "hasTimeslotAttribute" "numberOfPatients")}}
+						<th>{{t "attributes.job.timeslot.number-of-patients"}}</th>
+					{{/if}}
+
+					{{!-- Rates --}}
+					{{#if (either (equal job.rateAlgorithm.momentOfCalculation "Creation") forceRateCalculation)}}
+						
+						{{#if (either user.profile.isEmployee job.rateAlgorithm.candidateInvoicesDirectly)}}
+							<th>
+								{{t "attributes.job.timeslot.candidate-rate"}}
+								{{#if (either job.rateAlgorithm.intermediaryPercentage job.clientCanModifyRate)}}*{{/if}}
+							</th>
+							<th>
+								{{t "attributes.job.timeslot.billable-rate"}}								
+							</th>
+						{{else}}
+							<th>
+								{{t "attributes.job.timeslot.rate"}}
+								{{#if job.clientCanModifyRate}}*{{/if}}
+							</th>
+						{{/if}}
+
+					{{/if}}
+
+					<th></th>
+				</thead>
+				<tbody>
+				{{#each timeslots as |timeslot timeslotIndex|}}
+
+					<tr>
+						<td>
+							{{momentFormat timeslot.date "LL"}}
+						</td>
+						<td>{{momentFormat timeslot.date "dddd"}}</td>
+						{{#if $.job.isBooked}}
+							<td>
+								{{#if timeslot.bookingTimeslots}}
+									{{#each timeslot.bookingTimeslots as |bookingTimeslot|}}
+										{{#if bookingTimeslot.booking}}
+											{{#if bookingTimeslot.booking.profileSummary}}
+												<hh-profile profile={{bookingTimeslot.booking.profileSummary}} />
+											{{/if}}
+										{{/if}}
+									{{/each}}
+								{{/if}}								
+							</td>
+						{{/if}}
+						{{#unless timeslot.hasLockedBookingTimeslots}}
+							<td class="time">
+								<hh-time-input value={{timeslot.fromTime}} />
+							</td>
+							<td class="time">
+								<hh-time-input value={{timeslot.untilTime}} />
+							</td>							
+							{{#if (method job.type "hasTimeslotAttribute" "minutesBreaktime")}}
+								<td class="minutes">
+									<div class="ui right labeled minutes-breaktime input">
+										<input type="number" value={{timeslot.minutesBreaktime}} step="15" min="0" max="60">
+										<div class="ui label">{{t "words.minutes-short"}}</div>
+									</div>								
+								</td>
+							{{/if}}
+							{{#if (both user.profile.isEmployee (method job.type "hasTimeslotAttribute" "minutesUnbillable"))}}
+								<td class="time">
+									<hh-time-input mode="hours" value={{timeslot.minutesUnbillable}} value-as="minutes" />
+								</td>
+							{{/if}}
+
+							<td>
+								{{time timeslot.numberOfHours}}
+							</td>
+
+
+							{{#if (method job.type "hasTimeslotAttribute" "numberOfPatients")}}
+								<td>
+									<hh-enum-select key="number-of-patients" value={{timeslot.numberOfPatients}} />
+								</td>
+							{{/if}}
+
+							{{!-- Rates --}}
+							{{#if (either (equal job.rateAlgorithm.momentOfCalculation "Creation") forceRateCalculation)}}
+								
+								{{!-- Candidate rate --}}
+								{{#if (either user.profile.isEmployee job.rateAlgorithm.candidateInvoicesDirectly)}}
+									<td class="rate">
+
+										{{#if (either user.profile.isEmployee job.clientCanModifyRate)}}
+											
+											{{!-- Editable --}}
+											<hh-number-input type="euro" value={{timeslot.candidateRate}} is-loading={{timeslot.is.calculating}} />
+
+											{{#if (both timeslot.candidateRate (equal timeslotIndex 0) (gt (count timeslots) 1))}}
+												<a href="#" {{action "copyRateToAllTimeslots" timeslot.candidateRate}} style="font-size: 11px; text-align: center; display: block; margin-top: 4px;">
+													<i class="copy icon"></i>
+													{{l "copy-rate-to-all-timeslots"}}
+												</a>
+											{{/if}}
+
+										{{else}}
+
+											{{!-- Display --}}
+											{{#if (either timeslot.is.calculating (not timeslot.candidateRate))}}
+												<i class="loading spinner icon"></i>
+											{{else}}	
+												{{euro timeslot.candidateRate}}
+											{{/if}}
+
+										{{/if}}
+									</td>
+								{{/if}}
+								
+								{{!-- Billable rate --}}
+								<td class="rate">
+									{{#if either user.profile.isEmployee}}
+
+										{{!-- Editable --}}
+										<hh-number-input type="euro" value={{timeslot.billableRate}} is-loading={{timeslot.is.calculating}} />
+										
+									{{else}}
+
+										{{!-- Diplayed only --}}
+										{{#if (either timeslot.is.calculating (neither timeslot.billableRate job.clientCanModifyRate))}}
+											<i class="loading spinner icon"></i>
+										{{else}}
+											{{#if timeslot.billableRate}}
+												{{euro timeslot.billableRate}}
+											{{/if}}
+										{{/if}}
+
+									{{/if}}
+								</td>
+
+							{{/if}}
+							
+							<td class="actions">
+								{{#unless (both (not job.is.new) (equal (count timeslots) 1))}}
+									<i class="grey trash icon clickable" {{action "deleteTimeslot" timeslot}}></i>
+								{{/unless}}
+							</td>
+						{{else}}
+
+							<td colspan="10">
+								<span style="font-size: 0.85em;">{{l "booking-timeslot-is-locked"}}</span>
+							</td>
+
+						{{/unless}}
+					</tr>
+
+				{{/each}}
+				</tbody>
+			</table>
+
+			{{#if (either (equal job.rateAlgorithm.momentOfCalculation "Creation") forceRateCalculation)}}						
+
+				{{!-- RATE FOOTNOTES --}}
+				{{#if (either (both user.profile.isClient job.clientCanModifyRate) job.rateAlgorithm.candidateInvoicesDirectly)}}
+
+					<em style="font-size: 0.85em;">
+						{{#if (both user.profile.isClient job.clientCanModifyRate job.rateAlgorithm.intermediaryPercentage)}}
+							{{l "client-can-change-rate-plus-intermediary-footnote" percentage=job.rateAlgorithm.intermediaryPercentage}}
+						{{else if (both user.profile.isClient job.clientCanModifyRate)}}
+							{{l "client-can-change-rate-footnote"}}
+						{{else if job.rateAlgorithm.intermediaryPercentage}}
+							{{l "intermediary-footnote" percentage=job.rateAlgorithm.intermediaryPercentage}}
+						{{/if}}
+					</em>
+
+				{{/if}}
+
+			{{/if}}
+
+			{{#if job.isBooked}}
+
+				<em style="font-size: 0.85em;">{{l "cancel-booking-timeslots"}}</em>
+
+			{{/if}}
+	
+		</div>
+	{{/if}}
+
+</div>

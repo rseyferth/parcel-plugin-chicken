@@ -1,0 +1,406 @@
+<div class="sidebar {{if isOpen "open" "closed"}} button" {{action "toggleOpen"}} title={{l "button"}}>
+
+    {{#if isOpen}}
+        <i class="left chevron icon"></i>
+    {{else}}
+        <i class="tasks icon"></i>
+    {{/if}}
+
+</div>
+<div class="content">
+
+    {{!-- Profile and date selection --}}
+    <header class="ui inverted header">
+         <h3>
+            <img src={{profile.avatarUrl}} class="ui avatar image">
+            <div class="content">
+                
+                {{profile.firstName}}<br>
+
+                <a class="prev link" {{action "changeDate" -1}}>
+                    <i class="left chevron icon"></i>
+                </a>
+
+                {{#if dateIsToday}}
+                    <div class="date">
+                        {{momentFormat date "LL"}}          
+                    </div>
+                    <div class="time">
+                        {{time}}
+                    </div>
+                {{else}}
+                    <div class="date">{{momentFormat date "ddd LL"}}</div>
+                {{/if}}
+
+
+                <a class="next link" {{action "changeDate" 1}}>
+                    <i class="right chevron icon"></i>
+                </a>
+            </div>            
+        </h3>
+        
+    </header>
+
+    {{!-- Tab menu --}}
+    <div class="ui inverted two item menu">
+        <a class="{{if showTasks "active" ""}} item" {{action "showTasks"}}>
+            <i class="tasks icon"></i>
+            {{l "menu.tasks"}}
+            {{#if activeTasks}}
+                ({{count activeTasks}})
+            {{/if}}
+        </a>
+        <a class="{{if showTasks "" "active"}} item" {{action "showNotifications"}}>
+            <i class="bell outline icon"></i>
+            {{l "menu.notifications"}}
+            {{#if unhandledNotifications}}
+                ({{unhandledNotificationCount}})
+            {{/if}}
+        </a>
+    </div>
+
+
+    {{!-- 
+    ████████╗ █████╗ ███████╗██╗  ██╗███████╗    
+    ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝██╔════╝    
+       ██║   ███████║███████╗█████╔╝ ███████╗    
+       ██║   ██╔══██║╚════██║██╔═██╗ ╚════██║    
+       ██║   ██║  ██║███████║██║  ██╗███████║    
+       ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝    
+                                                 
+    --}}
+    {{#if showTasks}}
+
+        {{#unless formShowing}}
+            {{#if appointments}}
+                <div class="appointments">
+
+                    <div class="ui small inverted relaxed divided list">                
+                        {{#each appointments as |app|}}
+
+                            <a class="item" href="#" {{action "gotoTaskable" app}} >
+                                <i class="orange clock icon"></i>
+                                <div class="content">
+                                    <div class="header">
+                                        {{momentFormat app.startsAt "LT"}} {{app.taskableTitle}}
+                                    </div>
+                                    <div class="description">
+                                        {{app.title}}
+                                    </div>
+                                </div>
+                            </a>
+
+                        {{/each}}
+                    </div>
+
+                </div>
+         {{/if}}
+        
+
+            <div class="tasks">
+
+                {{#if tasks}}
+                    <hh-planning-task-list due-date={{date}} tasks={{tasks}} profile={{profile}} />
+                {{/if}}
+
+            </div>
+
+        {{/unless}}
+
+
+
+        {{#if (either loadingContextual contextualModel)}}
+            <div class="contextual {{if showFinishTaskForm "active" ""}}">
+
+                <h3 class="ui small green header">                
+                    {{#if loadingContextual}}
+                        <i class="loading spinner icon"></i>
+                    {{else}}
+                        <i class="file icon"></i>
+                    {{/if}}
+                    {{l "contextual.title"}}
+                </h3>
+
+
+                {{#if contextualModel}}
+                
+                    {{!-- 
+                     ██████╗ ██████╗ ███╗   ██╗████████╗███████╗██╗  ██╗████████╗██╗   ██╗ █████╗ ██╗     
+                    ██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔════╝╚██╗██╔╝╚══██╔══╝██║   ██║██╔══██╗██║     
+                    ██║     ██║   ██║██╔██╗ ██║   ██║   █████╗   ╚███╔╝    ██║   ██║   ██║███████║██║     
+                    ██║     ██║   ██║██║╚██╗██║   ██║   ██╔══╝   ██╔██╗    ██║   ██║   ██║██╔══██║██║     
+                    ╚██████╗╚██████╔╝██║ ╚████║   ██║   ███████╗██╔╝ ██╗   ██║   ╚██████╔╝██║  ██║███████╗
+                     ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝                                                                                                          
+                     --}}
+                    
+                    {{#if contextualTask}}
+
+                        {{#unless contextualTask.completedAt}}
+                            <hh-planning-task-list 
+                                tasks={{contextualTasks}} 
+                                date={{contextualTask.dueDate}}
+                                due-date={{contextualTask.dueDate}}
+                                show-assigned-to=true
+                                show-due-date=true
+                                allow-drag-drop=false
+                                allow-card-links=true 
+                                allow-selection=true
+                                profile={{profile}} />
+
+                            {{#unless contextualTaskIsForMeToday}}
+
+                                <p class="note">
+                                    <i class="orange warning sign icon"></i>
+                                    {{l "contextual.not-for-you-today"}}
+                                </p>
+
+                            {{/unless}}
+                        {{/unless}}
+
+                        {{#if contextualTask.isAssignedToMe}}
+
+                            {{#if showFinishTaskForm}}
+
+                                {{#if contextualTask.completedAt}}
+
+                                    {{!-- TASK COMPLETED --}}
+                                    <p class="note">
+                                        <i class="green checkmark icon"></i>
+                                        {{l "contextual.task-completed"}}
+                                    </p>
+
+                                    {{!-- Finished --}}
+                                    <button class="ui fluid green button" {{action "completeFinishTask"}}>
+                                        {{l "contextual.button.continue"}}
+                                    </button>
+
+                                {{else}}
+
+                                    {{!-- 
+                                    ███████╗██╗███╗   ██╗██╗███████╗██╗  ██╗    ████████╗ █████╗ ███████╗██╗  ██╗
+                                    ██╔════╝██║████╗  ██║██║██╔════╝██║  ██║    ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
+                                    █████╗  ██║██╔██╗ ██║██║███████╗███████║       ██║   ███████║███████╗█████╔╝ 
+                                    ██╔══╝  ██║██║╚██╗██║██║╚════██║██╔══██║       ██║   ██╔══██║╚════██║██╔═██╗ 
+                                    ██║     ██║██║ ╚████║██║███████║██║  ██║       ██║   ██║  ██║███████║██║  ██╗
+                                    ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝       ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝                                                                                                                 
+                                     --}}
+
+                                    <hh-form model={{taskAction}} class="finish-form" on-submit="submitFinishTask">
+
+                                        <div class="field">
+                                            <label>{{l "finish-form.what-did-you-do"}}</label>
+                                            <ui-textarea value={{_.taskAction.whatDidYouDo}} />
+                                        </div>
+
+                                        {{#unless _.contextualTask.taskable.requiresFollowUpTask}}
+                                            <div class="field">
+                                                <hh-checkbox value={{_.taskAction.createFollowUpTask}}>
+                                                    {{l "finish-form.create-follow-up-task"}}
+                                                </hh-checkbox>
+                                            </div>
+                                        {{/unless}}
+
+                                        {{#if _.taskAction.createFollowUpTask}}
+                                            <div class="field" data-validation="followUpTaskTitle">
+                                                <label>{{l "finish-form.follow-up-task-title"}}</label>
+                                                <ui-input type="text" value={{_.taskAction.followUpTaskTitle}} />
+                                            </div>
+                                            <div class="field" data-validation="followUpTaskDueDate">
+                                                <label>{{l "finish-form.follow-up-task-due-date"}}</label>
+                                                <ui-calendar 
+                                                    ui-min-date={{_.today}}
+                                                    ui-type="date" 
+                                                    value={{_.taskAction.followUpTaskDueDate}} 
+                                                    ui-start-mode="day" />
+                                            </div>
+                                            <div class="field">
+                                                <label>{{l "finish-form.follow-up-task-assign-to.label"}}</label>
+                                                <hh-model-dropdown value={{_.taskAction.followUpTaskAssignedToProfile}}                                            
+                                                    options={{_.employees}}                                             
+                                                    title-attribute="name"
+                                                    null-option=true
+                                                    null-label={{l "finish-form.follow-up-task-assign-to.empty"}} />
+                                                
+                                            </div>
+
+                                            <div class="field">
+                                                <label>{{l "finish-form.follow-up-task-priority"}}</label>
+                                                <hh-enum-select key="task-priority" value={{_.taskAction.followUpTaskPriority}} icons=true />
+                                            </div>
+
+                                            <div class="field">
+
+                                                <hh-checkbox value={{_.taskAction.followUpTaskIsAppointment}} class="ui small header checkbox">
+                                                    <i class="orange clock icon"></i>
+                                                    {{l "finish-form.follow-up-task-is-appointment.label"}}
+                                                </hh-checkbox>
+                                                
+                                            </div>
+
+                                            {{#if _.taskAction.followUpTaskIsAppointment}}
+
+                                                <div class="field">
+                                                    <label>{{t "attributes.task.starts-at"}}</label>
+                                                    <ui-calendar value={{_.taskAction.followUpTaskStartsAt}} ui-type="datetime" ui-start-mode="hour" />
+                                                </div>
+
+                                            {{/if}}
+
+                                        {{/if}}
+
+                                        <div class="ui two buttons">
+
+                                            {{!-- Finished --}}
+                                            <button class="ui green button" type="submit">
+                                                <i class="checkmark icon"></i>
+                                                {{l "finish-form.button.submit"}}
+                                            </button>
+                                            <button class="ui red button" {{action "cancelFinishTask"}}>
+                                                <i class="cancel icon"></i>
+                                                {{l "finish-form.button.cancel"}}
+                                            </button>
+
+                                        </div>
+
+
+
+                                    </hh-form>
+
+                                {{/if}}
+
+                            {{else}}
+                            
+                                {{!-- Finished --}}
+                                <button class="ui fluid green button" {{action "finishTask"}}>
+                                    <i class="checkmark icon"></i>
+                                    {{l "contextual.button.finish-task"}}
+                                </button>
+
+                            {{/if}}
+
+                        {{/if}}
+                        
+                        
+
+                    {{else}}
+
+                        {{!-- 
+                        ███╗   ██╗███████╗██╗    ██╗    ████████╗ █████╗ ███████╗██╗  ██╗
+                        ████╗  ██║██╔════╝██║    ██║    ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
+                        ██╔██╗ ██║█████╗  ██║ █╗ ██║       ██║   ███████║███████╗█████╔╝ 
+                        ██║╚██╗██║██╔══╝  ██║███╗██║       ██║   ██╔══██║╚════██║██╔═██╗ 
+                        ██║ ╚████║███████╗╚███╔███╔╝       ██║   ██║  ██║███████║██║  ██╗
+                        ╚═╝  ╚═══╝╚══════╝ ╚══╝╚══╝        ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+                                                                                         
+                         --}}
+                        {{#if showNewTaskForm}}
+
+                            <hh-form model={{newTask}} on-saved="newTaskSaved">
+
+                                <div class="field" data-validation="title">
+                                    <label>{{l "new-task.title"}}</label>
+                                    <ui-input type="text" value={{_.newTask.title}} />
+                                </div>
+                                <div class="field" data-validation="dueDate">
+                                    <label>{{l "new-task.due-date"}}</label>
+                                    <ui-calendar ui-type="date" value={{_.newTask.dueDate}} ui-start-mode="day" />
+                                </div>
+                                <div class="field">
+                                    <label>{{l "new-task.assign-to.label"}}</label>
+                                    <hh-model-dropdown value={{_.newTask.assignedToProfile}}                                            
+                                        options={{_.employees}}                                             
+                                        title-attribute="name"
+                                        null-option=true
+                                        null-label={{l "new-task.assign-to.empty"}} />
+                                    
+                                </div>
+                                <div class="field">
+                                    <label>{{l "new-task.priority"}}</label>
+                                    <hh-enum-select key="task-priority" value={{_.newTask.priority}} icons=true />
+                                </div>
+
+                                <div class="ui two buttons">
+
+                                    {{!-- Finished --}}
+                                    <button class="ui green button" type="submit">
+                                        <i class="checkmark icon"></i>
+                                        {{l "finish-form.button.submit"}}
+                                    </button>
+                                    <button class="ui red button" {{action "cancelNewTask"}}>
+                                        <i class="cancel icon"></i>
+                                        {{l "finish-form.button.cancel"}}
+                                    </button>
+
+                                </div>
+
+
+
+                            </hh-form>
+
+                        {{else}}
+
+                            <button class="ui green fluid button" {{action "newTask"}}>
+                                <i class="plus icon"></i>
+                                {{l "add-task.button"}}
+                            </button>
+
+                        {{/if}}
+                        
+
+                    {{/if}}
+
+                {{/if}}
+
+            </div>
+
+        {{/if}}
+
+    {{/if}}
+
+    {{!-- 
+    ███╗   ██╗ ██████╗ ████████╗██╗███████╗██╗ ██████╗ █████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+    ████╗  ██║██╔═══██╗╚══██╔══╝██║██╔════╝██║██╔════╝██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+    ██╔██╗ ██║██║   ██║   ██║   ██║█████╗  ██║██║     ███████║   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+    ██║╚██╗██║██║   ██║   ██║   ██║██╔══╝  ██║██║     ██╔══██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║
+    ██║ ╚████║╚██████╔╝   ██║   ██║██║     ██║╚██████╗██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║███████║
+    ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚═╝╚═╝     ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+     --}}
+
+    {{#if showNotifications}}
+
+        <div class="notifications">
+
+            {{#each unhandledNotifications as |notification|}}
+                <hh-notification-card notification={{notification}} />
+            {{/each}}
+
+
+            {{#if handledNotifications}}
+
+                <div class="handled">
+                    <div class="ui relaxed list">
+                        {{#each handledNotifications as |notification|}}
+                            <a class="item" {{action "gotoNotificationPage" notification}}>
+                                <i class="blue bell icon"></i>
+                                <div class="content">
+                                    <div class="header">{{momentFormat notification.createdAt "LT"}} {{notification.title}}</div>
+                                    <div class="description">
+                                        {{t "components.notification.card.handled" by=notification.handledByProfile.firstName at=notification.handledAt}}
+                                    </div>
+                                </div>
+                            </a>                            
+                        {{/each}}
+                    </div>
+
+
+                </div>
+
+
+
+            {{/if}}
+
+        </div>
+
+    {{/if}}
+
+</div>

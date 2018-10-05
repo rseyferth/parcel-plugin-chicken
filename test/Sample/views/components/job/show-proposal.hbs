@@ -1,0 +1,333 @@
+<div class="ui container centered grid">
+	
+	<div class="sixteen wide column main-content">
+				
+		<h4 class="ui dividing header">{{l "profiles"}}</h4>
+		<div class="ui three centered cards">
+			{{#each proposal.proposalProfiles as |pp|}}
+				<div class="card" profile={{pp.profile}}>
+					
+					<div class="image">
+						{{#if pp.isSuggested}}
+							<a class="ui large right green corner label">
+								<i class="thumbs up icon"></i>
+							</a>
+						{{/if}}									
+					</div>
+								
+					<div class="content">
+						<img src={{pp.profile.avatarUrl}} class="ui left floated tiny bordered image">
+									
+						<div class="header">{{pp.profile.name}}</div>
+						<div class="meta">
+								{{pp.profile.primaryTypeTitle}}
+								
+							
+						</div>
+						<div class="description ui form">
+						
+							{{#if pp.profile.resumeFilepath}}
+								<div>
+									<a href={{pp.profile.resumeDownloadUrl}} target="_blank">
+										<i class="file alternate outline icon"></i>
+										{{l "profile.download-resume"}}
+									</a>
+								</div>
+							{{/if}}
+
+							<div>
+								<i class="map marker alternate icon"></i>
+								{{pp.profile.address.city}}
+							</div>
+							<div>
+								<i class="calendar alternate outline icon"></i>
+								{{momentFormat pp.profile.dateOfBirth "LL"}} ({{t "words.x-years" years=pp.profile.age}})
+							</div>
+														
+							<div>
+								<i class="car icon"></i>
+								{{l (concat "profile.has-own-car." (if pp.profile.hasCar "yes" "no"))}}
+							</div>
+
+							{{#if pp.comments}}
+								<p class="big text">{{pp.comments}}</p>
+							{{/if}}
+
+							{{#if pp.discountPercentage}}
+								<p class="field">
+									<label>{{t "attributes.job.proposal.profile.discount-percentage"}}</label>
+									{{numberFormat pp.discountPercentage}}%
+								</p>
+							{{/if}}
+							
+							<div class="ui very relaxed divided list">
+								
+								{{#each pp.profile.publicCertifications as |cert|}}
+
+									<div class="item">
+										<i class="{{cert.certification.color}} {{cert.certification.typeIcon}} large middle aligned icon"></i>
+										<div class="content">
+											<h4 class="header">
+												{{cert.certification.title}}										
+											</h4>
+											{{#if cert.description}}
+												<div class="description">
+													{{cert.description}}
+												</div>
+											{{/if}}
+										</div>
+
+									</div>
+									
+
+								{{/each}}
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+			{{/each}}
+		</div>
+
+		{{#if proposal.comments}}
+			<br>
+			<h4 class="ui dividing header">{{l "comments"}}</h4>
+			<p>{{proposal.comments}}</p>
+			<br>
+		{{/if}}
+
+		{{#if hasCancelledOptations}}
+
+			<br>
+			<div class="ui icon info message">
+				<i class="delete calendar icon"></i>
+				<div class="content">
+					<div class="header">{{l "cancelled-optations.title"}}</div>
+					<p>{{l "cancelled-optations.text"}}</p>
+				</div>
+
+			</div>
+		{{/if}}
+
+
+	</div>
+
+</div>
+
+<div class="ui container centered grid">
+	
+	<div class="sixteen wide column main">
+
+		<p><strong>{{l "instructions"}}</strong></p>
+
+	</div>
+
+</div>
+
+<div class="ui grey background margined fluid container">
+
+	<div class="ui grid">
+		<div class="column">
+		
+			<div class="horizontal centered scrollable">
+
+				<table class="ui celled timeslot selection booking striped table">
+					<thead>
+						<tr>
+							<th class="collapsing">{{t "attributes.job.timeslot.date"}}</th>
+							<th class="collapsing">{{t "attributes.job.timeslot.times"}}</th>							
+
+							{{#each proposal.proposalProfiles as |pp|}}
+								<th class="collapsing selectable" {{action "toggleProfile" pp.profile}}>
+									<div class="profile">
+										<hh-profile profile={{pp.profile}} enable-preview-link=false />
+									</div>
+								</th>
+							{{/each}}							
+						</tr>				
+					</thead>
+					<tbody>
+						{{#each timeslots as |slot|}}
+						<tr>
+							<td class="collapsing">{{momentFormat slot.jobTimeslot.date "ddd LL"}}</td>
+							<td class="collapsing">{{momentFormat slot.jobTimeslot.from "LT"}} - {{momentFormat slot.jobTimeslot.until "LT"}}</td>
+							{{#each slot.slots as |slot|}}
+								{{#if slot.timeslotProfile}}
+									
+									{{#if (equal slot.timeslotProfile.optation.status "CancelledByOtherBooking")}}
+
+										<td class="collapsing is-cancelled" title={{l "cell.cancelled"}}>
+											<i class="delete calendar icon"></i>											
+										</td>
+
+									{{else if allowResponse}}
+
+										<td class={{slot.timeslotProfile.cellClass}} {{action "toggleSlot" slot}}>
+											<i class={{slot.timeslotProfile.icon}}></i>
+											{{euro (getRateWithDiscount slot.timeslotProfile)}}
+										</td>										
+
+									{{else}}
+
+										<td class={{slot.timeslotProfile.cellClass}}>
+											<i class={{slot.timeslotProfile.icon}}></i>
+											{{euro (getRateWithDiscount slot.timeslotProfile)}}
+										</td>										
+
+									{{/if}}
+
+								{{else}}
+									<td></td>
+								{{/if}}
+							{{/each}}
+							
+						</tr>
+						{{/each}}
+					</tbody>				
+				</table>
+
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div class="ui container centered grid">
+	
+	{{#if proposal.isClosed}}
+		
+		{{!-- PROPOSAL CLOSED! --}}
+		<div class="ten wide column main-content">
+		
+
+
+			{{#if user.profile.isClient}}
+
+				{{#if proposal.acceptedByClientAt}}
+					<h3>{{l "you-have-accepted.title"}}</h3>
+					<p>{{l "you-have-accepted.intro" moment=proposal.acceptedByClientAt}}</p>
+				{{else}}
+					<h3>{{l "you-have-declined.title"}}</h3>
+					<p>{{l "you-have-declined.intro" moment=proposal.declinedByClientAt}}</p>
+				{{/if}}
+
+				<br>
+
+				<a class="ui fluid button" {{linkTo "client.company.show" companyId=proposal.job.companyId}}>
+					{{l "back-to-company"}}
+				</a>
+
+			{{else}}
+
+				{{!-- 
+				███████╗███╗   ███╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗███████╗     █████╗  ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
+				██╔════╝████╗ ████║██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔════╝    ██╔══██╗██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+				█████╗  ██╔████╔██║██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  █████╗      ███████║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗
+				██╔══╝  ██║╚██╔╝██║██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██╔══╝      ██╔══██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
+				███████╗██║ ╚═╝ ██║██║     ███████╗╚██████╔╝   ██║   ███████╗███████╗    ██║  ██║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
+				╚══════╝╚═╝     ╚═╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ --}}
+
+				{{#if proposal.cancelledAt}}
+
+					<h3>{{l "cancel.title"}}</h3>
+					<p>{{l "cancelled" at=proposal.cancelledAt}}</p>
+
+				{{else}}
+
+					<div class="ui comments">
+						{{#each proposal.responses as |response|}}
+							
+							<div class="green comment">
+								<div class="avatar">
+									<img src={{response.createdByUser.profile.avatarUrl}}>
+								</div>	
+								<div class="content">
+									<span class="author">{{response.createdByUser.profile.name}}</span>
+									<div class="metadata">
+										<span class="date">{{method response.createdAt "calendar"}}</span>
+									</div>
+									<div class="text">
+										<h3>
+											<i class="{{response.iconClass}} icon"></i>
+											{{l (concat "response.title." response.response)}}								
+										</h3>
+										{{#if response.message}}
+											<p>{{response.message}}</p>
+										{{/if}}
+										
+										
+									</div>
+								</div>
+								
+							</div>		
+							
+
+						{{/each}}
+					</div>
+
+					<br>
+
+					<div class="ui two large buttons">
+						<button class="ui positive button" {{linkTo "employee.job.booking.from-proposal" jobId=proposal.jobId proposalId=proposal.id}}>
+							{{l "convert-into-booking"}}
+						</button>
+						<div class="or" data-text={{t "words.or"}}></div>
+						<button class="ui button" {{linkTo "employee.job.show" jobId=proposal.jobId}}>
+							{{l "back"}}
+						</button>
+					</div>
+
+				{{/if}}
+
+			{{/if}}
+		</div>
+
+	{{else if allowResponse}}
+		
+		<div class="sixteen wide column main-content">
+			
+			<form class="ui form">
+				<h3>{{l "respond.title"}}</h3>
+
+				<div class="field">
+					<label>{{l "respond.message"}}</label>
+					<ui-textarea value={{responseMessage}} rows=4></ui-textarea>
+				</div>
+			
+				<br>
+
+				<div class="ui big two buttons">
+					<button class="ui green {{if isBusy "loading disabled" (if canBook "" "disabled")}} button" {{action "respondToProposal" "Accept"}}>{{l "respond.accept"}}</button>
+					<div class="or" data-text="{{t "words.or"}}"></div>
+					<button class="ui {{if isBusy "loading disabled"}} button" {{action "respondToProposal" "Decline"}}>{{l "respond.decline"}}</button>
+				</div>
+			</form>
+
+		</div>
+
+	{{/if}}
+
+
+
+	{{#if (both (not proposal.isClosed) user.profile.isEmployee)}}
+
+		<div class="ten wide column main-content">
+			
+			<hh-form model={{proposal}} before-save="cancelProposalBefore" on-saved="cancelProposalAfter">
+				<h3>{{l "cancel.title"}}</h3>
+				<p>{{l "cancel.intro"}}</p>
+
+				<br>
+				<button class="ui red fluid button" type="submit">
+					<i class="trash icon"></i>
+					{{l "cancel.button"}}
+				</button>
+			</hh-form>
+
+
+		</div>
+
+	{{/if}}
+
+</div>

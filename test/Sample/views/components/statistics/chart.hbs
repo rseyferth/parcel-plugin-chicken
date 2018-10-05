@@ -1,0 +1,110 @@
+<div class="ui grid">
+
+    <div class="ui {{if twoColumns "eight" "sixteen"}} wide column {{if isLoading "loading" ""}}">
+        <canvas width="400" height="400"></canvas>
+        
+        <br>            
+        {{#unless interval}}
+
+            <div class="ui two column grid">
+
+                <div class="column">
+                    {{#unless showByDepartment}}
+                        <hh-checkbox class="" value={{showByProvince}}>
+                            {{l "toggle.by-province"}}
+                        </hh-checkbox>                    
+                    {{/unless}}
+                </div>
+                <div class="column">
+                    {{#unless showByProvince}}
+                        <hh-checkbox class="" value={{showByDepartment}}>
+                            {{l "toggle.by-department"}}
+                        </hh-checkbox>
+                    {{/unless}}
+                </div>            
+
+            </div>
+            <br>
+        {{/unless}}
+        {{#if showIntervalAndPeriodPulldown}}
+            <hh-enum-select key="statistics.interval-period" value={{intervalAndPeriod}} />
+
+            <p class="dates">
+                {{#if from}}
+                    {{momentFormat from "LL"}}
+                    {{#if until}}
+                        - {{momentFormat until "LL"}}
+                    {{/if}}
+                {{/if}}
+            </p>
+
+
+
+        {{/if}}
+       
+    </div>
+
+    {{#if showTable}}
+
+        <div class="ui {{if twoColumns "eight" "sixteen"}} wide column">
+
+            <hh-expandable height={{tableFold}}>
+
+                <table class="ui small celled striped structured table">
+                    <thead>
+                        <tr>
+                            {{#if _.showPeriods}}
+                                <th></th>
+                            {{/if}}
+                            <th>
+                                {{_.title}} 
+                                <span style="font-weight: normal;">({{numberFormat _.totalCount}})</span>
+                            </th>
+                            <th>{{l "table.count"}}</th>
+                            <th>{{l "table.percentage"}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each _.results as |result|}}
+                            {{#each result.items as |item index|}}
+
+                                <tr>
+
+                                    {{#if (both _.showPeriods (equal index 0))}}
+                                        <td rowspan={{count result.items}} class="top aligned">
+                                            <strong>{{result.key}}</strong><br>
+                                            {{l "table.total" count=(numberFormat result.total)}}
+                                        </td>                                        
+                                    {{/if}}
+
+                                    <td>
+                                        <i class="circle icon" style="color: {{item.color}};"></i>
+                                        {{item.label}}
+                                    </td>
+                                    <td>
+                                        {{#if (equal _.valueFormat "euro")}}
+                                            {{euro item.count}}
+                                        {{else}}
+                                            {{numberFormat item.count}}
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{percentage item.percentage 1}}
+                                    </td>
+
+                                </tr>
+
+                            {{/each}}
+                        {{/each}}
+                    </tbody>
+                </table>
+
+            </hh-expandable>
+
+        </div>
+
+    {{/if}}
+    
+
+</div>
+

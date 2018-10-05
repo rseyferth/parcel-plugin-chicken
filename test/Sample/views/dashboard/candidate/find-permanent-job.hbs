@@ -1,0 +1,31 @@
+<div class="content">
+	{{#if jobs}}
+		
+		<div class="ui list relaxed">
+			{{#each jobs as |job|}}
+				
+				<a class="item" {{linkTo 'candidate.permanent-job.show' jobId=job.id}}>				
+					
+					<i class="big {{job.typeIcon}} icon"></i>
+					<div class="content">
+						
+						<div class="header">{{job.city}}</div>
+						{{#if job.startDate}}
+							<div class="description">{{l "preferred-start-date" date=(momentFormat job.startDate "LL")}}</div>
+						{{/if}}
+						
+					</div>					
+				</a>
+
+			{{/each}}
+		</div>
+
+		<button class="ui fluid button" {{linkTo "candidate.permanent-job.index" filter=filter.slug}}>
+			{{l "button" filter=filter.title}}
+		</button>
+	{{else}}
+		
+		<p>{{l "no-jobs"}}</p>
+
+	{{/if}}
+</div>

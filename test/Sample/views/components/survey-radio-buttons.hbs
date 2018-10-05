@@ -1,0 +1,14 @@
+<div class="survey-radio-buttons">
+	<div class="survey-radio-button">
+		<input type="radio" id="surveyQuestion{{question.id}}-notApplicable" name="surveyQuestion{{question.id}}" value="0" checked="{{if (equal answer.notApplicable true) "checked" ""}}">
+		<label for="surveyQuestion{{question.id}}-notApplicable">n.v.t.</label>
+	</div>
+	<div class="indication-icon"><i class="icon frown"></i></div>		
+	{{#each valueOptions as |valueOption| }}
+		<div class="survey-radio-button">
+			<input type="radio" id="surveyQuestion{{question.id}}-{{valueOption}}" name="surveyQuestion{{question.id}}" value="{{valueOption}}" checked="{{if (equal answer.answerValue valueOption) "checked" ""}}">
+			<label for="surveyQuestion{{question.id}}-{{valueOption}}">{{valueOption}}</label>
+		</div>
+	{{/each}}
+	<div class="indication-icon"><i class="icon smile"></i></div>
+</div>

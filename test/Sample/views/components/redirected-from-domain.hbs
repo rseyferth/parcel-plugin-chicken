@@ -1,0 +1,28 @@
+<ui-modal class="large hh-redirect-from-domain" id="redirectModal">
+
+    <i class="close icon"></i>
+    <div class="header">
+        {{l (concat domainKey ".title")}}
+    </div>
+    <div class="image content">
+        <div class="ui large image">
+
+            <img src="/assets/huisartsenhulp/public/{{l (concat domainKey ".logo")}}"><br>
+
+            <p>{{l "becomes"}}</p>
+
+            <img src="/assets/huisartsenhulp/logo-color.svg">
+        </div>
+        <div class="description">
+
+            {{{md (l (concat domainKey ".content"))}}}
+
+        </div>
+    </div>
+        <div class="actions">
+            <div class="ui positive button">
+                {{l "close"}}
+            </div>
+        </div>
+    
+</ui-modal>

@@ -1,0 +1,69 @@
+{{#if (either showName showContactName)}}
+	<div class="fields">
+
+		{{#if showName}}
+			<div class="eight wide field">
+				<label>{{l "name"}}</label>
+				<input type="text" value={{address.name}}>
+			</div>
+		{{/if}}
+		{{#if showContactName}}
+			<div class="eight wide field">
+				<label>{{l "contact-name"}}</label>
+				<input type="text" value={{address.contactName}}>
+			</div>
+		{{/if}}
+
+	</div>
+{{/if}}
+
+{{#if enterManually}}
+
+	<div class="fields">
+		<div class="twelve wide field" data-validation="{{validationPrefix}}street">
+			<label>{{l "street"}}</label>
+			<ui-input type="text" value={{address.street}} />
+		</div>
+		<div class="four wide field" data-validation="{{validationPrefix}}houseNumber">
+			<label>{{l "house-number"}}</label>
+			<ui-input type="text" value={{address.houseNumber}} />
+		</div>
+	</div>
+	<div class="fields">
+		<div class="six wide field" data-validation="{{validationPrefix}}postalCode:not-empty|postal-code">
+			<label>{{l "postal-code"}}</label>
+			<ui-input type="text" value={{address.postalCode}} maxlength=7 />
+		</div>
+		<div class="ten wide field" data-validation="{{validationPrefix}}city">
+			<label>{{l "city" }}</label>
+			<ui-input type="text" value={{address.city}} maxlength=7 />
+		</div>
+	</div>
+
+{{else}} 
+
+	<div class="fields">
+		<div class="six wide field" data-validation="{{validationPrefix}}postalCode:not-empty|postal-code">
+			<label>{{l "postal-code"}}</label>
+			<ui-input type="text" value={{address.postalCode}} />
+		</div>
+		<div class="four wide field" data-validation="{{validationPrefix}}houseNumber">
+			<label>{{l "house-number"}}</label>
+			<ui-input type="text" value={{address.houseNumber}} />
+		</div>
+		<div class="six wide field" data-validation="{{validationPrefix}}street" data-validation-label={{l "street"}}>
+			{{#if isLoading}}
+				<label>{{l "address"}}</label>
+				<i class="loading spinner icon"></i>
+			{{else if invalidAddress}}
+				<label>{{l "address"}}</label>
+				<p class="error">{{l "invalid-address"}}</p>				
+			{{else if address.street}}
+				<label>{{l "address"}}</label>
+				{{{address.asHtml}}}
+			{{/if}}
+		</div>
+	</div>
+
+
+{{/if}}

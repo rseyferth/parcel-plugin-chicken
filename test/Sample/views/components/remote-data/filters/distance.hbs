@@ -1,0 +1,16 @@
+<div class="two fields">
+	<div class="field">
+		<input type="text" class="place" value={{placeName}}>
+	</div>
+	<div class="field">
+		<ui-dropdown value={{range}} class="selection">
+			<i class="dropdown icon"></i>
+			<div class="default text"></div>
+			<div class="menu">
+				{{#each ranges as |range|}}
+					<div class="item" data-value={{range.value}}>{{range.label}}</div>
+				{{/each}}
+			</div>
+		</ui-dropdown>
+	</div>
+</div>

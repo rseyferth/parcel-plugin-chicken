@@ -1,0 +1,83 @@
+<thead>
+	<th>{{t "attributes.job.timeslot.date"}}</th>
+	<th>{{t "attributes.job.timeslot.day-of-week"}}</th>
+	<th>{{t "attributes.job.timeslot.times"}}</th>
+	
+	{{#if (method job.type "hasTimeslotAttribute" "minutesBreaktime")}}
+		<th>{{t "attributes.job.timeslot.minutes-breaktime"}}</th>
+	{{/if}}
+	{{#if (both user.profile.isEmployee (method job.type "hasTimeslotAttribute" "minutesUnbillable"))}}
+		<th>{{t "attributes.job.timeslot.minutes-unbillable"}}</th>
+	{{/if}}
+	
+	<th>{{t "attributes.job.timeslot.number-of-hours"}}</th>
+	
+	{{#if (method job.type "hasTimeslotAttribute" "numberOfPatients")}}
+		<th>{{t "attributes.job.timeslot.number-of-patients"}}</th>
+	{{/if}}	
+
+	{{!-- Rates --}}
+	{{#if (either (equal job.rateAlgorithm.momentOfCalculation "Creation") forceRateCalculation)}}
+		
+		{{#if (either user.profile.isEmployee job.rateAlgorithm.candidateInvoicesDirectly)}}
+			<th>{{t "attributes.job.timeslot.candidate-rate"}}</th>
+			<th>
+				{{t "attributes.job.timeslot.billable-rate"}}											
+			</th>
+		{{else}}
+			<th>
+				{{t "attributes.job.timeslot.rate"}}
+			</th>
+		{{/if}}
+
+	{{/if}}
+
+</thead>
+<tbody>
+	{{#each timeslots as |timeslot|}}
+		<tr>
+			<td>{{momentFormat timeslot.date "LL"}}</td>
+			<td>{{momentFormat timeslot.date "dddd"}}</td>
+			<td class={{if (both showDirty (isDirty timeslot "from" "until")) "positive" ""}}>
+				{{#if (both showDirty (isDirty timeslot "from" "until"))}}
+					<i class="pencil icon"></i>
+				{{/if}}
+				{{timeslot.formattedTimes}}
+			</td>
+			{{#if (method job.type "hasTimeslotAttribute" "minutesBreaktime")}}
+				<td class={{if (both showDirty (isDirty timeslot "minutesBreaktime")) "positive" ""}}>
+					{{#if (both showDirty (isDirty timeslot "minutesBreaktime"))}}
+						<i class="pencil icon"></i>
+					{{/if}}
+					{{t "words.x-min" min=timeslot.minutesBreaktime}}
+				</td>
+			{{/if}}
+			{{#if (both user.profile.isEmployee (method job.type "hasTimeslotAttribute" "minutesUnbillable"))}}
+				<td class={{if (both showDirty (isDirty timeslot "minutesUnbillable")) "positive" ""}}>
+					{{#if (both showDirty (isDirty timeslot "minutesUnbillable"))}}
+						<i class="pencil icon"></i>
+					{{/if}}
+					{{time timeslot.minutesUnbillable "minutes"}}
+				</td>
+			{{/if}}
+
+			<td>{{time timeslot.numberOfHours}}</td>
+			
+			{{!-- Rates --}}
+			{{#if (either (equal job.rateAlgorithm.momentOfCalculation "Creation") forceRateCalculation)}}
+				
+				{{#if (either user.profile.isEmployee job.rateAlgorithm.candidateInvoicesDirectly)}}
+					<td>
+						{{euro timeslot.candidateRate}}
+					</td>
+				{{/if}}
+				<td>
+					{{euro timeslot.billableRate}}
+				</td>
+					
+			{{/if}}
+
+			
+		</tr>	
+	{{/each}}
+</tbody>

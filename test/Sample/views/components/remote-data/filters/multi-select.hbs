@@ -1,0 +1,36 @@
+<ui-dropdown class="selection fluid multiple filter" value={{filter.value}} valueIsArray=true>
+	<i class="dropdown icon"></i>
+	<div class="default text">Selecteer {{t (concat "filters." key "." (fallback filter.titleKey filter.key))}}</div>
+	<div class="menu">
+
+		{{#each filter.options as |key value|}}
+		
+			<div class="item" data-value={{value}}>{{key}}</div>
+
+		{{/each}}
+
+	</div>	
+</ui-dropdown>
+{{#if filter.showAndOr}}
+	<br>
+	<ui-radio value={{filter.operator}} class="inline fields">
+				
+		<div class="field">			
+			<div class="ui radio checkbox">
+				<input name="operator-{{filter.key}}" type="radio" value="OR">
+				<label>
+					{{l "operator.or"}}
+				</label>
+			</div>
+		</div>
+		<div class="field">			
+			<div class="ui radio checkbox">
+				<input name="operator-{{filter.key}}" type="radio" value="AND">
+				<label>
+					{{l "operator.and"}}
+				</label>
+			</div>
+		</div>
+
+	</ui-radio>
+{{/if}}

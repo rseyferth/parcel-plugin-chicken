@@ -1,0 +1,14 @@
+<div class="text"></div>
+<i class="dropdown icon"></i>
+<div class="menu">
+	{{#if nullOption}}
+		<div class="item" data-value="">
+			{{nullLabel}}
+		</div>
+	{{/if}}
+	{{#each options as |option|}}
+		<div class="item" data-value={{get option valueAttribute}}> 
+			{{get option titleAttribute}}
+		</div>
+	{{/each}}
+</div>

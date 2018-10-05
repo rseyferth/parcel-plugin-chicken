@@ -1,0 +1,113 @@
+<h3 class="ui dividing header">{{l "form.groups.basics"}}</h3>
+
+<div class="field" data-validation="name">
+	<label>{{l "form.name"}}</label>
+	<input type="text" value={{company.name}}>
+</div>
+
+{{#if profile.isEmployee}}
+
+	<div class="field">
+		<label>{{l "form.type"}}</label>
+		<hh-enum-select key="company-type" value={{company.type}} />
+	</div>
+
+	{{#if (equal company.type "Normal")}}
+		
+		<div class="field">
+			<label>{{l "form.parent-company.label"}}</label>
+			{{#if parentCompanies}}
+				<hh-model-dropdown 
+					value={{company.parentCompany}}
+					options={{parentCompanies}}
+					null-option=true
+					null-label={{l "form.parent-company.none"}}
+					title-attribute="name"
+					/>
+			{{else}}
+				<i class="loading spinner icon"></i>
+			{{/if}}
+		</div>
+
+	{{/if}}
+
+{{/if}}
+
+
+
+<h3 class="ui dividing header">{{l "form.groups.office-address"}}</h3>
+<hh-address-form address={{company.officeAddress}} validation-prefix="officeAddress." />
+
+{{#unless signup}}
+
+	<h3 class="ui dividing header">{{l "form.groups.billing-address"}}</h3>
+	<div class="field">
+		<hh-checkbox value={{hasBillingAddress}}>{{l "form.has-billing-address"}}</hh-checkbox>
+	</div>
+	{{#if hasBillingAddress}}
+		<hh-address-form address={{company.billingAddress}} validation-prefix="billingAddress." show-name=true show-contact-name=true />
+	{{/if}}
+
+{{/unless}}
+
+
+<h3 class="ui dividing header">{{l "form.groups.communication"}}</h3>
+<div class="field" data-validation="telephone:telephone">
+	<label>{{l "form.telephone"}}</label>
+	<div class="ui input left icon">
+		<i class="phone icon"></i>
+		<input type="text" value={{company.telephone}}>
+	</div>
+</div>
+<div class="field" data-validation="billingEmail:email">
+	<label>{{l "form.billing-email"}}</label>
+	<div class="ui input left icon">
+		<i class="at icon"></i>
+		<input type="text" value={{company.billingEmail}}>
+	</div>
+</div>
+<div class="field" data-validation="website:url">
+	<label>{{l "form.website"}}</label>
+	<div class="ui input left icon">
+		<i class="world icon"></i>
+		<input type="text" value={{company.website}}>
+	</div>
+</div>
+
+{{#unless (equal company.type "Organization")}}
+
+	<h3 class="ui dividing header">{{l "form.groups.details"}}</h3>
+
+	<div class="field" data-validation="softwareHis">
+		<label>{{l "form.software-his"}}</label>
+		<hh-enum-select key="software-his" value={{company.softwareHis}} />	
+	</div>
+
+	<div class="field">
+		<label>{{l "form.software-kis"}}</label>
+		<hh-enum-select key="software-kis" value={{company.softwareKis}} />
+	</div>
+
+	<div class="two fields">
+		<div class="field">
+			<label>{{l "form.practice-type"}}</label>
+			<hh-enum-select key="practice-type" value={{company.practiceType}} />
+		</div>
+		<div class="field">
+			<label>{{l "form.number-of-patients"}}</label>
+			<hh-enum-select key="number-of-patients" value={{company.numberOfPatients}} />
+		</div>
+	</div>
+
+	<div class="field">
+		<hh-checkbox value={{company.hasNearbyPublicTransport}}>
+			{{l "form.has-nearby-public-transport"}}
+		</hh-checkbox>			
+	</div>
+	<div class="field">
+		<hh-checkbox value={{company.hasFreeParking}}>
+			{{l "form.has-free-parking"}}
+		</hh-checkbox>			
+	</div>
+
+{{/unless}}

@@ -1,0 +1,26 @@
+<div class="content">
+	
+	<p>{{l "intro"}}</p>
+
+	<div class="ui relaxed list">
+		{{#each surveyInvitations as |invitation|}}
+			
+			<a class="item" {{linkTo "client.survey-response.show" surveyResponseId=invitation.surveyResponse.id}}>
+				
+				<i class="big {{invitation.surveyResponse.icon}}"></i>
+				
+				<div class="content">
+					<div class="header">
+						{{invitation.surveyResponse.title}}						
+					</div>
+					{{#if invitation.surveyResponse.latestJobBookingTimeslot}}
+						<div class="grey description">
+							{{l "survey-date" date=invitation.surveyResponse.latestJobBookingTimeslot.from}}
+						</div>
+					{{/if}}
+				</div>
+			</a>
+		{{/each}}
+	</div>
+
+</div>

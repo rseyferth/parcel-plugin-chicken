@@ -1,0 +1,37 @@
+{{#each messages as |message|}}
+
+    {{#unless message.isDismissed}}
+        
+        <div class="message">
+            {{#if (equal message.type "Notification")}}
+
+                <hh-notification-card
+                    show-time=false
+                    show-dismiss=true
+                    on-dismiss="dismissMessage"
+                    notification={{message.notification}} />
+
+            {{else}}
+
+                <div class="hh-notification-card">
+
+                    
+                    <div class="content">
+                        {{{message.text}}}
+                    </div>
+
+                    <div class="ui three small buttons">
+                        <button class="ui grey button" {{action "dismissMessage" message}}>
+                            <i class="close icon"></i>
+                            {{l "buttons.dismiss"}}
+                        </button>    
+                    </div>
+
+                </div>
+
+            {{/if}}
+        </div>
+
+    {{/unless}}
+
+{{/each}}

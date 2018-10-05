@@ -1,0 +1,187 @@
+{{#if calendar}}
+
+	<div class="ui fluid grey background margined container {{if isBusy "loading" ""}}">
+	
+		{{#if showMonths}}
+
+			<div class="ui months very relaxed grid">
+				<div class="one wide column calendar-toolbar">
+						
+					<header>
+						<button class="ui button" {{action "clickToday"}}>
+							Vandaag
+						</button>
+					</header>
+										
+				</div>
+				<div class="fifteen wide column">
+					
+					<div class="{{numberToString monthsInView}} months">
+							
+						{{#each months as |month|}} 
+
+							<div class={{month.cssClass}} {{action "clickMonth" month}}>
+								<span class="month">{{month.monthName}}</span>
+								<span class="year">{{month.year}}</span>
+							</div>
+
+						{{/each}}
+
+					</div>
+
+				</div>
+			</div>
+
+
+		{{/if}}
+
+
+		{{#if showWeekView}}
+
+			<div class="ui week-view very relaxed grid">
+				
+				<div class="one wide column calendar-toolbar">
+					
+					<header>
+						{{#if allowNavigation}}
+							<button class="ui icon button" {{action "moveView" -1}}>
+								<i class="left chevron icon"></i>
+							</button>
+						{{/if}}
+					</header>
+
+					<div class="events">
+						{{#each dayParts as |dayPart|}}
+							<div class={{dayPart.cssClass}} style={{dayPart.cssStyle}}>
+								{{l (concat "day-parts." dayPart.key)}}
+								{{#if dayPart.icon}}
+									<i class="{{dayPart.icon}} icon"></i>
+								{{/if}}
+							</div>
+						{{/each}}
+					</div>
+						
+				</div>
+				<div class="fourteen wide column">
+
+					<div class="{{numberToString daysVisibleInView}} days">
+						
+						{{#each dates as |day|}}
+								
+							<div class={{day.cssClass}}>
+								
+								<header class="{{if showDates "with-dates" ""}}"
+									 {{action "clickDayHeader" day}}
+									 {{action "mouseoverDayHeader" day on="mouseenter"}} 
+									 {{action "mouseoutDayHeader" day on="mouseleave"}}>
+									<span class="day">{{momentFormat day.date "dd"}}</span>
+									{{#if showDates}}
+										<span class="date">
+											{{momentFormat day.date "D"}}
+										</span>
+										<span class="month-year">
+											{{momentFormat day.date "MMM YYYY"}}
+										</span>
+									{{/if}}
+								</header>
+
+								<div class="events">	
+									{{#each dayParts as |dayPart|}}
+
+										<div class={{dayPart.cssClass}} style={{dayPart.cssStyle}} {{action "clickDayPart" day dayPart}}></div>
+
+									{{/each}}
+
+
+
+									{{#each day.events as |event|}}
+		
+										<div class={{event.cssClass}} style={{getEventStyle event day}} {{action "clickEvent" event}}>
+											
+											{{#if (equal event.type "Available")}}
+												<i class="thumbs up type icon"></i>
+											{{else if (equal event.type "Unavailable")}}
+												<i class="thumbs down type icon"></i>
+											{{else if (equal event.type "Optation")}}
+												<span class="type">{{l "event-title.optation"}}</span>
+												<i class="checkmark box type icon"></i>
+											{{else if (equal event.type "FreedOptation")}}
+												<span class="type">{{l "event-title.freed-optation"}}</span>
+												<i class="checkmark box type icon"></i>
+											{{else if (equal event.type "Booking")}}
+												<span class="type">{{l "event-title.booking" name=event.bookingTimeslot.job.company.name}}</span>
+												<i class="checked calendar type icon"></i>
+											{{else}}
+												
+												{{event.title}}
+
+											{{/if}}
+
+												<div class="loading"></div>
+											{{#if event.is.busy}}
+											{{/if}}
+											
+										</div>
+						
+									{{/each}}
+
+								</div>
+
+							</div>
+						
+
+						{{/each}}
+
+					</div>
+					
+				</div>
+				<div class="one wide column calendar-toolbar">
+					
+					<header>
+						{{#if allowNavigation}}
+							<button class="ui icon button" {{action "moveView" 1}}>
+								<i class="right chevron icon"></i>
+							</button>
+						{{/if}}
+					</header>
+
+					<div class="hour-marks">
+							
+						{{#each hourMarks as |hourMark|}}
+
+							<div class="hour-mark" style={{hourMark.cssStyle}}>
+								{{hourMark.time}}
+							</div>
+
+						{{/each}}
+						
+					</div>
+				</div>
+			</div>
+		{{/if}}
+
+	</div>
+
+
+	{{#if showRepeater}}
+
+		<div class="ui container centered grid">
+			<div class="sixteen wide column main-content">
+			
+				<hh-calendar-repeater calendar={{calendar}} />
+
+			</div>
+		</div>
+
+	{{/if}}
+
+
+{{else}}
+
+	<div class="ui container centered grid">
+		<div class="sixteen wide column">
+			{{l "no-calendar"}}
+		</div>
+	</div>
+
+{{/if}}

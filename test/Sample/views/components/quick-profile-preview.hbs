@@ -1,0 +1,110 @@
+<ui-modal id="modalProfilePreview">
+	
+	{{#if _.profile}}
+		
+		<i class="close icon"></i>
+
+		<div class="ui header">
+			<h3>
+				{{_.profile.name}}
+				{{#each _.profile.types as |type|}}
+					<span class="ui large label">{{type.title}}</span>
+				{{/each}}
+			</h3>
+						
+		</div>
+		<div class="ui image content" style="align-items: flex-start;">
+			<img src={{_.profile.avatarUrl}} class="ui medium bordered image">
+			<div class="description" style="width: 100%;">
+				<div class="ui two column definitions grid">
+					{{#if _.profile.firstName}}
+						<div class="column">
+							<div class="header">{{t "attributes.profile.first-name"}}</div>
+							<div>{{_.profile.firstName}}</div>
+						</div>
+					{{/if}}
+					{{#if _.profile.lastName}}
+						<div class="column">
+							<div class="header">{{t "attributes.profile.last-name"}}</div>
+							<div>{{_.profile.lastName}}</div>						
+						</div>
+					{{/if}}
+					<div class="column">
+						<div class="header">{{t "attributes.profile.user-email"}}</div>
+						<div>
+							<a href="mailto:{{_.profile.userEmail}}">{{_.profile.userEmail}}</a>
+						</div>						
+					</div>
+					{{#if _.profile.telephoneMobile}}
+						<div class="column">
+							<div class="header">{{t "attributes.profile.telephone-mobile"}}</div>
+							<div>{{_.profile.telephoneMobile}}</div>						
+						</div>
+					{{/if}}
+					{{#if _.profile.city}}
+						<div class="column">
+							<div class="header">{{t "attributes.profile.city"}}</div>
+							<div>{{_.profile.city}}</div>						
+						</div>
+					{{/if}}
+					{{#if _.profile.dateOfBirth}}
+						<div class="column">
+							<div class="header">{{t "attributes.profile.date-of-birth"}}</div>
+							<div>{{momentFormat _.profile.dateOfBirth "LL"}} ({{t "words.x-years" years=_.profile.age}})</div>						
+						</div>
+					{{/if}}
+					{{#if _.profile.assistantExperience}}
+						<div class="column">
+							<div class="header">{{t "attributes.profile.assistant-experience"}}</div>
+							<div>{{_.profile.assistantExperience}}</div>						
+						</div>
+					{{/if}}
+
+					{{#if _.profile.weeklyAvailabilityIndication}}
+						<div class="column">
+							<div class="header">{{t "attributes.profile.weekly-availability-indication"}}</div>
+							<div>{{_.profile.weeklyAvailabilityIndication}}</div>						
+						</div>
+					{{/if}}
+					{{#if _.showConnections}}
+						<div class="sixteen wide column">
+							<div class="header">{{l "recent-connections"}}</div>
+							<div>
+								{{#each _.profile.recentConnections as |connection|}}
+									<a class="ui small label" {{action "showCompany" connection.company}}>
+										{{connection.company.name}}
+									</a>
+								{{/each}}
+							</div>
+						</div>
+				
+					{{/if}}
+
+				
+
+				</div>
+
+
+			</div>
+			
+		</div>
+		<br>
+		<div class="two ui buttons">
+			{{#if showCompleteProfileLink}}					
+				<button class="ui primary button" {{action "showCompleteProfile"}}>
+					<i class="big eye icon"></i>
+					{{l "view-profile"}}
+				</button>
+			{{/if}}
+			{{#if showUseApplicationAs}}
+				<button class="ui orange button" {{action "useApplicationAs"}}>
+					<i class="big spy icon"></i>
+					{{l "use-application-as" name=_.profile.name}}
+				</button>
+			{{/if}}
+		</div>
+		
+
+	{{/if}}
+
+</ui-modal>

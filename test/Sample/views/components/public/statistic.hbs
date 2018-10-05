@@ -1,0 +1,18 @@
+{{#if _.isLoading}}
+    <div class="disabled circular orange ui button hh-stat-button">
+        <i class="loading spinner icon"></i>
+    </div>
+{{else}}
+    <button {{action "click"}} class="{{if route "" "disabled"}} circular orange ui button hh-stat-button">
+        {{#if pre}}
+            <span class="pre">{{pre}}</span>
+        {{/if}}
+        <span class="{{if (gt (count value) 4) "small" ""}} stat">{{value}}</span>
+        {{#if post}}
+            <span class="post">{{post}}</span>
+        {{/if}}
+        {{#if caption}} 
+            {{caption}}
+        {{/if}}
+    </button>
+{{/if}}

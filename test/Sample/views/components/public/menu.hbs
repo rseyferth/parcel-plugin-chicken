@@ -1,0 +1,50 @@
+<div class="public-menu">
+		
+	<div class="menu-background">
+
+		<div class="ui container">
+			<a {{linkTo "public.home"}} class="logo">
+				<img src="/assets/huisartsenhulp/logo-color.svg" />
+			</a>
+		</div>
+
+	</div>
+
+	<div class="ui secondary menu">
+		<div class="ui container">
+			
+			<div class="right menu">				
+				{{#if isAuthenticated}}
+					<a class="main item" {{linkTo "dashboard"}}>{{t "navigation.dashboard"}}</a>
+				{{else}}
+					<a class="main item" {{linkTo "login"}}>{{t "navigation.login"}}</a>
+					<a class="main item" {{linkTo "signup"}}>{{t "navigation.signup"}}</a>
+				{{/if}}	
+				<a class="main item" {{linkTo "public.contact"}}><i class="icon volume control phone"></i>{{t "navigation.contact"}}</a>
+
+				<ui-dropdown class="main item">
+					<i class="content icon no-margin"></i>
+					<div class="ui menu">
+						
+						<a class="ui item" {{linkTo "public.home"}}>{{t "navigation.public.home"}}</a>						
+
+						<div class="divider"></div>
+
+						<a class="ui item" {{linkTo "public.find-candidates"}}>{{t "navigation.public.find-candidates"}}</a>						
+						<a class="ui item" {{linkTo "public.find-jobs"}}>{{t "navigation.public.find-jobs"}}</a>
+
+						<div class="divider"></div>
+
+						<a class="ui item" {{linkTo "public.job-openings"}}>{{t "navigation.public.job-openings"}}</a>
+						<a class="ui item" {{linkTo "public.rates"}}>{{t "navigation.public.rates"}}</a>
+						<a class="ui item" {{linkTo "public.references"}}>{{t "navigation.public.references"}}</a>
+						<a class="ui item" {{linkTo "public.about-us"}}>{{t "navigation.public.about-us"}}</a>
+						<a class="ui item" {{linkTo "public.contact"}}>{{t "navigation.public.contact"}}</a>
+					</div>
+				</ui-dropdown>	
+
+			</div>
+		</div>
+	</div>
+
+</div>

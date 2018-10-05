@@ -1,0 +1,19 @@
+<div class="ui blue inverted segment">
+    
+    <div class="ui inverted form">
+
+        {{#if addFieldsTag}}
+
+            <div class="fields">
+
+                {{yield}}
+
+            </div>
+
+        {{else}}
+            {{yield}}
+        {{/if}}
+
+    </div>
+
+</div>

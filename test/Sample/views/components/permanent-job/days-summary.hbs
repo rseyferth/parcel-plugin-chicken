@@ -1,0 +1,22 @@
+<table class="ui table">
+	<thead>
+		<tr>
+			<th>{{t "attributes.permanent-job.day.day-of-week"}}</th>
+			<th class="time">{{t "attributes.permanent-job.day.from"}}</th>
+			<th class="time">{{t "attributes.permanent-job.day.until"}}</th>
+			<th class="minutes">{{t "attributes.permanent-job.day.minutes-breaktime"}}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#each job.days as |day|}}		
+			{{#if (either (equal mode "show") day.is.enabled)}}
+				<tr>
+					<td>{{day.friendlyDayOfWeek}}</td>
+					<td>{{time day.from}}</td>
+					<td>{{time day.until}}</td>
+					<td>{{t "words.x-min" min=day.minutesBreaktime}}</td>
+				</tr>
+			{{/if}}
+		{{/each}}
+	</tbody>
+</table>

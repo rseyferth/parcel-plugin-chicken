@@ -1,0 +1,10 @@
+<div class="content create-job">
+
+	{{#each categories as |category|}}
+		<a class="ui big labeled icon fluid button" {{linkTo "create-job.2-type" category=category.key}}>
+			<i class="icon hh hh-{{category.icon}}"></i>					
+			{{{l "category" category=category.title}}}
+		</a>
+	{{/each}}
+	
+</div>

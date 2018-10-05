@@ -1,0 +1,7 @@
+{{#if profile}}
+	<img src={{profile.avatarThumbnailUrl}} class="ui avatar image">
+	{{profile.name}}
+{{else}}
+	<i class="question icon"></i>
+	{{l "unknown"}}
+{{/if}}

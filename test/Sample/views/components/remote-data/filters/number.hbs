@@ -1,0 +1,21 @@
+<div class="two fields">
+	{{#if twoValues}}
+		<div class="field">
+			<hh-number-input value={{filter.secondValue}} type={{filter.numberType}} />
+		</div>
+	{{/if}}
+	<div class="field">
+		<ui-dropdown value={{filter.operator}} class="selection">
+			<i class="dropdown icon"></i>
+			<div class="default text"></div>
+			<div class="menu">
+				{{#each operators as |operator|}}
+					<div class="item" data-value={{operator}}>{{operator}}</div>
+				{{/each}}
+			</div>
+		</ui-dropdown>
+	</div>
+	<div class="field">
+		<hh-number-input value={{filter.value}} type={{filter.numberType}} />
+	</div>
+</div>

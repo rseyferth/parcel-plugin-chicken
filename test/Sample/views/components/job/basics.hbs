@@ -1,0 +1,101 @@
+{{!-- SELECT COMPANY --}}
+{{#if (either profile.isEmployee (gt (count profile.companies) 1))}}
+	<h3 class="ui dividing header">{{l "groups.company"}}</h3>
+
+	<div class="field" data-validation="company:not-empty">
+		<label>{{l "form.company.label"}}</label>
+		
+		{{#if profile.isEmployee}}
+			
+			<ui-dropdown value={{$.job.company}} source="/companies?search={query}&include=office_address,invoice_preferences.payment_method,recentJobs" use-model-as-value=true value-attribute="id" text-attribute="name" class="search selection">
+				<i class="dropdown icon"></i>
+				<div class="default text">{{l "form.company.placeholder"}}</div>
+				<div class="menu">
+				</div>
+			</ui-dropdown>
+
+		{{else}}
+
+			<ui-dropdown value={{$.job.company}} source={{$.profile.companies}} use-model-as-value=true value-attribute="id" class="selection">
+				<i class="dropdown icon"></i>
+				<div class="default text">{{l "form.company.placeholder"}}</div>				
+			</ui-dropdown>
+
+		{{/if}}
+	</div>
+
+{{/if}}
+
+
+
+{{!-- JOB CONTACTS --}}
+<hh-job-contact-selector job={{$.job}} />
+
+
+{{#if (both locations (method job.type "hasJobAttribute" "jobLocationId"))}}
+	
+	<h3 class="ui dividing header">{{l "groups.location"}}</h3>
+
+	<div class="field" data-validation="location">
+		<label>{{t "attributes.job.location"}}*</label>
+		{{#if locations}}
+			<ui-dropdown value={{job.location}} source={{locations}} use-model-as-value=true value-attribute="id" text-attribute="name" class="selection">
+				<i class="dropdown icon"></i>
+				<div class="default text"></div>				
+			</ui-dropdown>
+		{{/if}}
+	</div>
+
+{{/if}}
+
+
+<h3 class="ui dividing header">{{l "groups.general"}}</h3>
+<div class="field">
+	<label>{{t "attributes.job.description"}}</label>
+	<ui-textarea value={{job.description}}></ui-textarea>
+</div>
+<div class="field">
+	<label>{{t "attributes.job.comments"}}</label>
+	<ui-textarea value={{job.comments}}></ui-textarea>
+</div>
+
+{{#if profile.isEmployee}}
+
+	<div class="field">
+		<hh-checkbox value={{job.inviteKnownCandidates}}>
+			{{t "attributes.job.invite-known-candidates"}}
+		</hh-checkbox>
+	</div>
+
+	<div class="field">
+		<hh-checkbox value={{job.isVisibleForCandidates}}>
+			{{t "attributes.job.is-visible-for-candidates"}}
+		</hh-checkbox>
+	</div>
+
+
+	{{!-- Garantie? --}}
+	{{#if (method job.type "hasJobAttribute" "hasBookingGuarantee")}}
+		<div class="field">
+			<hh-checkbox value={{job.hasBookingGuarantee}}>
+				{{t "attributes.job.has-booking-guarantee"}}
+			</hh-checkbox>
+		</div>
+	{{/if}}
+
+
+
+{{/if}}
+
+
+{{!-- JOB ATTRIBUTES --}}
+{{#if (method job.type "hasJobAttribute" "candidateWorksUnsupervised")}}
+	<div class="field">
+		<hh-checkbox value={{job.candidateWorksUnsupervised}}>
+			{{t "attributes.job.candidate-works-unsupervised"}}
+		</hh-checkbox>
+	</div>
+{{/if}}
+
+
+

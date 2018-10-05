@@ -1,0 +1,26 @@
+{{#if filteredRequirements}}
+	
+	{{#if title}}
+		<h3 class="ui dividing header">{{title}}</h3>
+	{{/if}}
+
+	<div class="ui grid">
+	
+		{{#each filteredRequirements as |requirement|}}
+
+			<div class="eight wide column">
+
+				<i class="{{requirement.certification.typeIcon}} {{requirement.certification.color}} icon"></i>
+				{{requirement.certification.title}}
+				{{#if (equal requirement.type "Required")}}
+					({{requirement.typeTitle}})
+				{{/if}}
+				
+			</div>
+
+		{{/each}}
+			
+	</div>
+
+
+{{/if}}

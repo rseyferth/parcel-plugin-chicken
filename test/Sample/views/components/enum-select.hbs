@@ -1,0 +1,14 @@
+<ui-dropdown value={{value}} class="ui fluid selection">
+	<i class="dropdown icon"></i>
+	<div class="default text">{{placeholder}}</div>
+	<div class="menu">
+		{{#each options as |value key|}}
+			<div class="item" data-value={{if useKey key value}}>
+				{{#if icons}}
+					<i class={{getIcon key}}></i>
+				{{/if}}
+				{{value}}
+			</div>
+		{{/each}}
+	</div>
+</ui-dropdown>

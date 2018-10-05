@@ -1,0 +1,56 @@
+<div class="content">
+	
+	{{#if timeslotsByType}}
+
+		{{#each timeslotsByType as |timeslots type|}}
+
+			{{#if moreThanOneType}}
+				<h3>
+					{{type}}
+				</h3>
+			{{/if}}
+
+			<table class="ui striped table">
+				<thead>
+					<th>{{t "attributes.job.timeslot.date"}}</th>
+					<th>{{t "attributes.job.timeslot.times"}}</th>
+					<th>{{t "attributes.job.booking.profile"}}</th>
+				</thead>
+				<tbody>
+					{{#each timeslots as |timeslot|}}
+						<tr>
+							<td>{{momentFormat timeslot.date "LL"}}</td>
+							<td>{{momentFormat timeslot.from "LT"}} - {{momentFormat timeslot.until "LT"}}</td>
+							<td>
+								{{#if timeslot.bookingTimeslots}}
+									{{#each timeslot.bookingTimeslots as |bookingTimeslot|}}
+										<hh-profile profile={{bookingTimeslot.booking.profile}} />
+									{{/each}}
+								{{else}}
+									{{l "no-bookings"}}
+								{{/if}}
+							</td>
+						</tr>
+					{{/each}}			
+				</tbody>
+			</table>
+		{{/each}}
+
+	{{else}}
+
+		<p>{{l "no-timeslots"}}</p>
+
+	{{/if}}
+
+	<div class="ui two fluid buttons">
+		<button class="ui primary button" {{linkTo "client.job-timeslot.index" query=(object fromDate=today)}}>
+			<i class="calendar icon"></i>
+			{{l "planning"}}
+		</button>
+		<button class="ui primary button" {{linkTo "client.company.show" companyId=company.id}}>
+			<i class="address book icon"></i>
+			{{l "company"}}
+		</button>
+	</div>
+	
+</div>

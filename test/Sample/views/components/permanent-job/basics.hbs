@@ -1,0 +1,62 @@
+{{!-- SELECT COMPANY --}}
+{{#if (either profile.isEmployee (gt count profile.companies 1))}}
+
+	<h3 class="ui dividing header">{{l "groups.company"}}</h3>
+
+	<div class="field" data-validation="company:not-empty">
+		<label>{{l "form.company.label"}}</label>
+		
+		{{#if profile.isEmployee}}
+			
+			<ui-dropdown value={{$.job.company}} source="/companies?search={query}" use-model-as-value=true value-attribute="id" text-attribute="name" class="search selection">
+				<i class="dropdown icon"></i>
+				<div class="default text">{{l "form.company.placeholder"}}</div>
+				<div class="menu">
+				</div>
+			</ui-dropdown>
+
+		{{else}}
+
+			<ui-dropdown value={{$.job.company}} source={{$.profile.companies}} use-model-as-value=true value-attribute="id" class="selection">
+				<i class="dropdown icon"></i>
+				<div class="default text">{{l "form.company.placeholder"}}</div>
+				<div class="menu">									
+				</div>
+			</ui-dropdown>
+
+		{{/if}}
+	</div>
+
+{{/if}}
+
+
+{{!-- JOB CONTACTS --}}
+<hh-job-contact-selector job={{$.job}} />
+
+
+<h3 class="ui dividing header">{{l "groups.description"}}</h3>
+
+<div class="field" data-validation="startDate">
+	<label>{{t "attributes.permanent-job.start-date"}}*</label>
+	<ui-calendar value={{job.startDate}} ui-type="date" ui-start-mode="month" />
+</div>
+
+<div class="field" data-validation="profileDescription">
+	<label>{{t "attributes.permanent-job.profile-description"}}*</label>
+	<ui-textarea value={{job.profileDescription}}></ui-textarea>
+</div>
+<div class="field" data-validation="companyDescription">
+	<label>{{t "attributes.permanent-job.company-description"}}*</label>
+	<ui-textarea value={{job.companyDescription}}></ui-textarea>
+</div>
+<div class="field" data-validation="activitiesDescription">
+	<label>{{t "attributes.permanent-job.activities-description"}}*</label>
+	<ui-textarea value={{job.activitiesDescription}}></ui-textarea>
+</div>
+
+<h3 class="ui dividing header">{{l "groups.comments"}}</h3>
+<div class="field">
+	<label>{{t "attributes.permanent-job.comments-for-employees"}}</label>
+	<ui-textarea value={{job.commentsForEmployees}}></ui-textarea>
+</div>
+

@@ -1,0 +1,27 @@
+<div class="content">
+	
+	<table class="ui striped table">
+		<thead>
+			<th>{{t "attributes.job.timeslot.date"}}</th>
+			<th>{{t "attributes.job.timeslot.times"}}</th>
+			<th>{{t "attributes.company.name"}}</th>
+		</thead>
+		<tbody>
+			{{#each bookingTimeslots as |bookingTimeslot|}}
+				{{#if bookingTimeslot.jobTimeslot}}
+					<tr class="{{if bookingTimeslot.cancelledAt "striked-through" ""}}">
+						<td>{{momentFormat bookingTimeslot.jobTimeslot.date "dddd D MMMM"}}</td>
+						<td>{{momentFormat bookingTimeslot.jobTimeslot.from "LT"}} - {{momentFormat bookingTimeslot.jobTimeslot.until "LT"}}</td>
+						<td>
+							{{bookingTimeslot.job.locationName}}
+						</td>
+					</tr>
+				{{/if}}
+			{{/each}}			
+		</tbody>
+	</table>
+	<button {{linkTo "candidate.planning"}} class="ui fluid button">
+		{{l "button"}}
+	</button>
+
+</div>

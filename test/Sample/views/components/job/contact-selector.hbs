@@ -1,0 +1,41 @@
+{{#if job.company}}
+    <div class="grouped fields">
+        <label>{{l "contact.label"}}</label>
+        {{#if isLoading}}
+            <i class="loading spinner icon"></i>
+        {{else if contacts}}
+    
+            {{#each contacts as |contact|}}
+                <div class="field">
+                    <hh-checkbox value={{contact.isSelected}}>
+                        <h4 class="ui header">
+                            {{contact.profile.name}}
+                            <div class="sub header">
+                                {{contact.profile.userEmail}}
+                            </div>
+                        </h4>                        
+                    </hh-checkbox>
+                </div>
+            {{/each}}
+
+        {{/if}}
+    </div>
+
+    {{#if employees}}
+        <div class="field" style="display: none;">
+            <label>{{l "representative.label"}}</label>
+            <hh-model-dropdown 
+                value={{job.representative}}
+                options={{employees}}
+                title-attribute="name" />
+        </div>        
+    {{else}}
+        {{#if job.representative}}
+            <div class="field">
+                <label>{{l "representative.as-company"}}</label>
+                {{job.representative.name}}
+            </div>
+        {{/if}}
+    {{/if}}
+
+{{/if}}

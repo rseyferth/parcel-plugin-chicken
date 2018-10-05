@@ -1,0 +1,18 @@
+<div class="content">
+
+	<div class="ui relaxed list">
+		{{#each companies as |company|}}
+			<a class="item" {{linkTo "employee.company.show" companyId=company.id}}>
+				
+				<div class="header">{{company.name}}</div>
+				<div class="description">
+					{{company.city}} - {{company.registeredSince}}
+				</div>
+
+			</a>
+		{{/each}}
+	</div>
+	
+	<button class="ui fluid primary button" {{linkTo "employee.company.index"}}>{{l "button" count=(get companies "page.recordCount")}}</button>
+
+</div>

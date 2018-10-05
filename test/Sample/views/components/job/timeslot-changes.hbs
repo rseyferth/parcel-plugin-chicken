@@ -1,0 +1,46 @@
+{{#if changesMade}}
+
+    {{#if addedTimeslots}}
+
+        <h5 class="ui blue dividing header">
+            <i class="plus icon"></i>
+            {{l "added"}}
+        </h5>
+        <hh-job-timeslot-summary job={{job}} timeslots={{addedTimeslots}} />
+ 
+    {{/if}}
+
+    {{#if modifiedTimeslots}}
+
+        <h5 class="ui blue dividing header">
+            <i class="pencil icon"></i>
+            {{l "modified"}}
+        </h5>
+
+        <hh-job-timeslot-summary job={{job}} timeslots={{modifiedTimeslots}} show-dirty=true />
+
+		{{#if timeslotWithOptationModified}}
+            <div class="field">
+                <hh-checkbox value={{cancelOptationsForModifiedTimeslots}}>
+                    {{l "cancel-optations-for-modified-timeslots"}}
+                </hh-checkbox>
+            </div>
+        {{/if}}
+
+    {{/if}}
+
+    {{#if deletedTimeslots}}
+
+         <h5 class="ui blue dividing header">
+            <i class="trash icon"></i>
+            {{l "deleted"}}
+        </h5>
+        <hh-job-timeslot-summary job={{job}} timeslots={{deletedTimeslots}} />
+
+    {{/if}}
+
+{{else}}
+
+    <p>{{l "no-changes"}}</p>
+
+{{/if}}

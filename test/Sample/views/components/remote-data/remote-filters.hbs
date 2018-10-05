@@ -1,0 +1,159 @@
+{{#if collapsible}}
+
+	<div class="ui top attached segment">
+
+		<div class="ui grid">
+			<div class="ten wide column">
+
+				<ui-dropdown value={{filterId}} on-select="selectFilter" class="fluid selection">
+					<div class="text"></div>
+					<i class="dropdown icon"></i>
+					<div class="menu">
+						{{#each _.savedFilters as |filter|}}
+							<div class="item" data-value={{filter.id}}>
+								<i class="filter icon"></i>
+								{{filter.title}}
+							</div>
+						{{/each}}
+					</div>
+
+				</ui-dropdown>
+				
+			</div>
+			<div class="six wide column">
+
+				<div class="ui big fluid left icon right action input">
+					<i class="search icon"></i>
+					<input type="text" value={{quickFilter}} placeholder={{l "quick-filter.placeholder"}}>
+
+					<button class="ui icon button" {{action "expand"}}>
+						<i class="configure icon"></i>
+					</button>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+{{/if}}
+
+{{#unless (either hidden (both collapsible collapsed))}}
+
+	<div class="ui bottom secondary padded attached segment">
+
+		<hh-form model={{formFilter}} id="filterForm">
+
+			{{!-- FILTER INFO --}}
+			<h3 class="ui dividing header">{{l "form.generic"}}</h3>
+
+			<div class="two fields">
+				<div class="field" data-validation="title:not-empty">
+					<label>{{l "form.title.label"}}</label>
+					<input type="text" value={{_.formFilter.title}} placeholder={{l "form.title.placeholder"}}>
+				</div>
+				<div class="field">
+					<label>{{l "form.view-option-key"}}</label>
+					<hh-enum-select key="filter-view-option" value={{_.formFilter.viewOptionKey}} />
+				</div>
+
+			</div>
+			<div class="field">
+				<hh-checkbox class="toggle" value={{_.formFilter.isPublic}}>{{l "form.is-public"}}</hh-checkbox>
+			</div>
+
+			{{!-- ADD FILTER FIELDS --}}		
+			<h3 class="ui dividing header">{{l "form.filters"}}</h3>
+			<div class="ui top attached small labeled icon blue inverted filter menu">
+				
+				<!-- Add filters -->
+				{{#each _.availableFilters as |filter|}}
+					<a class="item" {{action "addFilter" filter}}>
+						<i class="{{filter.icon}} icon"></i>
+						{{t (concat "filters." key "." (fallback filter.titleKey filter.key))}}
+					</a>
+				{{/each}}
+
+			</div>
+
+			<!-- ACTIVE FILTERS -->
+			{{#each _.activeFilters as |filter|}}	
+
+				<div class="remote-filter item">
+				
+					<div class="top aligned content">
+				
+						<div class="header">
+							<i class="{{filter.icon}} icon"></i>								
+							{{t (concat "filters." key "." (fallback filter.titleKey filter.key))}}
+					
+
+							<i class="clickable grey right floating trash icon" {{action "removeFilter" filter}}></i>
+							
+						</div>		
+
+						<div class="description">
+							
+							{{#if (filterIsType filter "text")}}
+								<hh-remote-text-filter filter={{filter}} />
+							{{else if (filterIsType filter "number")}}
+								<hh-remote-number-filter filter={{filter}} />
+							{{else if (filterIsType filter "boolean")}}
+								<hh-remote-boolean-filter filter={{filter}} />
+							{{else if (filterIsType filter "date-range")}}
+								<hh-remote-date-range-filter filter={{filter}} />
+							{{else if (filterIsType filter "within-year")}}
+								<hh-remote-within-year-filter filter={{filter}} />
+							{{else if (filterIsType filter "distance")}}
+								<hh-remote-distance-filter filter={{filter}} />
+							{{else if (filterIsType filter "radio")}}
+								<hh-remote-radio-filter filter={{filter}} />
+							{{else if (filterIsType filter "multi-select")}}
+								<hh-remote-multi-select-filter filter={{filter}} />
+							{{else}}
+								UNKNOWN FILTER TYPE {{filter.type}}
+							{{/if}}
+
+						</div>
+					</div>
+
+				</div>
+
+			{{/each}}
+
+
+			<br>
+
+			{{#if _.filter.is.new}}
+			
+				<button class="ui primary fluid button" type="button" {{action "saveFilter"}}>
+					<i class="add icon"></i>
+					{{l "buttons.create"}}
+				</button>
+
+			{{else}}
+
+				<div class="ui three buttons">
+
+					<button class="ui primary button" type="button" {{action "saveFilter"}}>
+						<i class="save icon"></i>
+						{{l "buttons.save"}}
+					</button>
+					<button class="ui green button" type="button" {{action "saveFilterAs"}}>
+						<i class="external icon"></i>
+						{{l "buttons.save-as"}}
+					</button>				
+					<button class="ui red button" type="button" {{action "deleteFilter"}}>
+						<i class="trash icon"></i>
+						{{l "buttons.delete"}}
+					</button>
+
+				</div>	
+
+			{{/if}}
+
+		</hh-form>
+
+	</div>
+{{/unless}}
+

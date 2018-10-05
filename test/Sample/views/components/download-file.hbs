@@ -1,0 +1,9 @@
+<a href={{file.url}} class="ui header download-file" target="_blank">
+    <i class="{{file.icon}} blue icon"></i>
+    <div class="content">
+        <span>{{fallback label file.originalFilename}}</span>
+        {{#if showCreatedAt}}
+            <div class="sub header">{{momentFormat file.createdAt "LL"}}</div>
+        {{/if}}
+    </div>
+</a>

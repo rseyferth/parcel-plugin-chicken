@@ -1,0 +1,15 @@
+{{#if showHeader}}
+	<div class="ui {{fallback class "blue"}} segment card-header">
+		<h4 class="ui {{fallback class "blue"}} header">
+			<i class="ui icons">
+				<i class="icon {{icon}}"></i>
+				{{#if cornerIcon}}
+					<i class="corner {{cornerIcon}} icon"></i>
+				{{/if}}
+			</i>
+			{{title}}
+		</h4>
+	</div>
+{{/if}}
+
+{{yield}}

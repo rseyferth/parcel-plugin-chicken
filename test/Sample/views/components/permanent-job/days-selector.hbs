@@ -1,0 +1,52 @@
+<div class="field">
+	<hh-checkbox value={{daysEnabled}}>
+		{{l "days-enabled"}}
+	</hh-checkbox>
+</div>
+
+{{#if daysEnabled}}
+	<table class="ui table">
+		<thead>
+			<tr>
+				<th>{{t "attributes.permanent-job.day.day-of-week"}}</th>
+				<th class="time">{{t "attributes.permanent-job.day.from"}}</th>
+				<th class="time">{{t "attributes.permanent-job.day.until"}}</th>
+				<th class="minutes">{{t "attributes.permanent-job.day.minutes-breaktime"}}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each job.days as |day|}}
+				<tr>
+					<td>
+						<hh-checkbox class="toggle" value={{day.is.enabled}}>
+							{{day.friendlyDayOfWeek}}
+						</hh-checkbox>
+					</td>
+					{{#if day.is.enabled}}
+						<td class="time">
+							<hh-time-input value={{day.from}} class="fluid" />
+						</td>
+						<td class="time">
+							<hh-time-input value={{day.until}} class="fluid" />
+						</td>
+						<td class="minutes">
+							<div class="ui right labeled minutes-breaktime input">
+								<input type="number" value={{day.minutesBreaktime}} step="15" min="0" max="60">
+								<div class="ui label">{{t "words.minutes-short"}}</div>
+							</div>								
+						</td>
+					{{else}}
+						<td colspan="3"></td>
+					{{/if}}
+				</tr>
+			{{/each}}
+		</tbody>
+	</table>
+{{else}}
+
+{{/if}}
+
+<div class="field">
+	<label>{{t "attributes.permanent-job.number-of-hours-per-week"}}</label>
+	<input type="number" max="100" min="0" step="1" disabled={{daysEnabled}} value={{job.numberOfHoursPerWeek}}>
+</div>

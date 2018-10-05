@@ -1,0 +1,33 @@
+<h3 class="ui header">{{l "title"}}</h3>
+
+<hh-form-section model={{task}} class="ui grid">
+    <div class="eight wide column">
+        <div class="field" data-validation="dueDate">
+            <label>{{l "due-date.label"}}</label>
+            <ui-calendar value={{_.task.dueDate}} ui-type="date" ui-start-mode="day" />
+        </div>
+    </div>
+    <div class="eight wide column">
+        <div class="field" data-validation="title">
+            <label>{{l "task-title.label"}}</label>
+            <ui-input type="text" value={{_.task.title}} />
+        </div>
+    </div>
+    <div class="eight wide column">
+        <div class="field">
+            <label>{{l "assigned-to.label"}}</label>
+            <hh-model-dropdown 
+                options={{_.employees}} 
+                value={{_.task.assignedToProfile}} 
+                title-attribute="name"
+                null-option=true
+                null-label={{l "assigned-to.empty"}} />
+        </div>        
+    </div>
+    <div class="eight wide column">
+        <div class="field">
+            <label>{{l "priority.label"}}</label>
+            <hh-enum-select key="task-priority" value={{_.task.priority}} icons=true />
+        </div>
+    </div>  
+</hh-form-section>

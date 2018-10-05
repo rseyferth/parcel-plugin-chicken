@@ -1,3 +1,47 @@
 <div>
     I AM HBS.
+    {{#if nonsense}}
+        <img src="../../assets/mini.jpg">
+    {{/if}}
+    <img src="../{{onzin}}">
+
+    <hh-cookie-warning />
+    <div class="public-layout">
+        <hh-public-menu></hh-public-menu>
+
+        <view-container name="page"></view-container>
+
+        <footer class="site-footer">
+            
+            <div class="hh-footer-logo"></div>
+
+            <a {{linkTo "public.privacy"}}>{{t "navigation.public.privacy"}}</a> <span>&middot;</span>
+            <a {{linkTo "public.cookies"}}>{{t "navigation.public.cookies"}}</a> <span>&middot;</span>		
+            <a {{linkTo "public.about-us"}}>{{t "navigation.public.about-us"}}</a> <span>&middot;</span>
+            <a {{linkTo "public.contact"}}>{{t "navigation.public.contact"}}</a> <span>&middot;</span>
+            
+            <a href="https://huisartsenhulp.recruitee.com/" target="_blank" rel="nofollow">{{t "navigation.public.work-for-us"}}</a> <span>&middot;</span>
+            <a href="//www.facebook.com/doktersassistent.nu" target="_blank" class="icon" rel="nofollow"> 
+                <i class="facebook icon" title={{t "navigation.public.facebook"}}></i>			
+            </a> <span>&middot;</span>
+            <a href="//www.linkedin.com/company/huisartsenhulp/" target="_blank" class="icon" rel="nofollow"> 
+                <i class="linkedin icon" title={{t "navigation.public.linkedin"}}></i>			
+            </a> <span>&middot;</span>
+            <a href="//www.twitter.com/huisartsenhulp" target="_blank" class="icon" rel="nofollow">
+                <i class="twitter icon" title={{t "navigation.public.twitter"}}></i>			
+            </a>
+            
+
+        
+        </footer>
+        
+        {{#if fromDomain}}
+
+            <hh-redirected-from-domain domain={{fromDomain}} />
+
+        {{/if}}
+
+    </div>
+
+
 </div>

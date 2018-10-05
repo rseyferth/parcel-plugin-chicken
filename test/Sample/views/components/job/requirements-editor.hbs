@@ -1,0 +1,56 @@
+{{#if (either job.requirements availableCertifications)}}
+
+	<h3 class="ui dividing header">{{l "title"}}</h3>
+
+	<div class="certification-group">
+	
+		{{#if job.requirements}}
+				{{#each job.requirements as |requirement|}}
+
+					<div class="certification">
+
+						{{!-- Only for employees, or when the cert is not restricted --}}
+						{{#if (either user.profile.isEmployee (not requirement.certification.isRestrictedForJobs))}}
+							<i class="trash icon" {{action "removeRequirement" requirement}}></i>				
+						{{/if}}
+
+						<h4 class="ui header">
+							<i class="{{requirement.certification.typeIcon}} {{requirement.certification.color}} icon"></i>
+							{{requirement.certification.title}}
+							{{#if (equal requirement.type "Required")}}
+								({{requirement.typeTitle}})
+							{{/if}}
+						</h4>
+						
+					</div>
+
+				{{/each}}
+			
+		{{/if}}
+	
+
+		{{#if availableCertifications}}
+
+			<p>{{l "add.intro"}}</p>
+
+			<div class="field">
+				<i class="big grey add icon"></i>
+				<ui-dropdown class="add-certification selection" onSelect="addRequirement" clear-after-selection=true>
+					<i class="dropdown icon"></i>
+					<div class="default text">{{l "add.placeholder"}}</div>
+					<div class="menu">
+						{{#each _.availableCertifications as |certification|}}
+						<div class="item" data-value={{certification.key}}>
+							<i class="{{certification.typeIcon}} {{certification.color}} icon"></i>
+							{{certification.title}}
+						</div>
+						{{/each}}
+					</div>
+				</ui-dropdown>
+			</div>
+
+		{{/if}}
+
+	</div>
+
+{{/if}}

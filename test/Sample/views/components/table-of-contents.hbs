@@ -1,0 +1,8 @@
+{{#each links as |link|}}
+
+    <a class="ui item" {{action "goto" link}}>
+        {{{link.html}}}
+    </a>
+
+{{/each}}
+

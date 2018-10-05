@@ -1,0 +1,9 @@
+{{#unless isMobile}}
+	<div class="hh-image-slider">
+
+		{{#each images as |image index|}}
+			<div class="image" style="background:url({{image}});"></div>
+		{{/each}}
+
+	</div>
+{{/unless}}

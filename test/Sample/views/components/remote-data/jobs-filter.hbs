@@ -1,0 +1,50 @@
+<div class="ui blue inverted segment">
+    
+    <div class="ui inverted form">
+
+        <div class="fields">
+
+            <div class="five wide field">
+
+                <i class="street view icon"></i>
+
+                <hh-checkbox value={{useRange}}>{{l "range"}}</hh-checkbox>
+                {{#if useRange}}
+                    <div class="ui fluid right labeled input">
+                        <input type="number" value={{range}} max=250 min=1 step=1>
+                        <div class="ui label">{{t "words.km"}}</div>
+                    </div>
+                {{/if}}
+
+            </div>
+
+            <div class="five wide field">
+
+                <i class="calendar icon"></i>
+
+                <hh-checkbox value={{useMinimumDate}}>{{l "minimum-date"}}</hh-checkbox>
+                {{#if useMinimumDate}}
+                    <ui-calendar value={{minimumDate}} ui-type="date" />
+                {{/if}}
+
+            </div>
+
+            {{#if showOnlyNewJobs}}
+
+                <div class="six wide field">
+
+                    <i class="check square icon"></i>
+
+                    <hh-checkbox value={{onlyNewJobs}}>
+                        <i class="asterisk icon"></i>
+                        {{l "only-new-jobs"}}
+                    </hh-checkbox>
+                </div>
+
+            {{/if}}
+
+        </div>
+
+    </div>
+
+</div>

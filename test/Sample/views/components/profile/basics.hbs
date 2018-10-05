@@ -1,0 +1,130 @@
+<p><em>{{t 'validation.mandatory-fields'}}</em></p>
+
+{{!-- BASICS --}}
+<ui-radio value={{profile.gender}} class="field" data-validation="gender:not-empty">
+
+	<label>{{l "form.gender.label"}}</label>
+	<div class="inline fields">
+		<div class="field">
+			<div class="ui radio checkbox">
+				<input name="gender" type="radio" value="Female">
+				<label>{{l "form.gender.female"}}</label>
+			</div>
+		</div>
+		<div class="field">
+			<div class="ui radio checkbox" data-validate="gender">
+				<input name="gender" type="radio" value="Male">
+				<label>{{l "form.gender.male"}}</label>
+			</div>
+		</div>
+	</div>
+
+</ui-radio>
+
+<div class="field">
+	<label>{{l "form.name"}}</label>
+	<div class="two fields">
+		<div class="field" data-validation="firstName" data-validation-label={{l "form.first-name"}}>
+			<input type="text" value={{profile.firstName}} placeholder={{l "form.first-name"}} />
+		</div>
+		<div class="field" data-validation="lastName" data-validation-label={{l "form.last-name"}}>
+			<input type="text" value={{profile.lastName}} placeholder={{l "form.last-name"}} />
+		</div>
+	</div>
+</div>
+
+
+{{!-- ONLY FOR CANDIDATES --}}
+{{#if profile.isCandidate}}
+
+	<div class="field" data-validation="dateOfBirth">
+		<label>{{l "form.date-of-birth"}}</label>
+		<ui-calendar value={{profile.dateOfBirth}} ui-type="date" ui-start-mode="year" data-validation="dateOfBirth" />
+	</div>
+
+		
+	{{#if profile.isWaarnemer}}
+
+		<div class="field" data-validation={{if userIsEmployee "" "bankAccountNumber:iban"}}>
+			<label>{{l "form.bank-account-number"}}</label>
+			<cleave-input value={{profile.bankAccountNumber}} type="iban" />
+		</div>
+
+	{{/if}}
+
+	
+	<h3 class="ui dividing header">{{l "form.group.address"}}</h3>
+
+	<hh-address-form address={{profile.address}} validation-prefix="address." />
+
+
+{{/if}}
+
+{{!-- CONTACT --}}
+<h3 class="ui dividing header">{{l "form.group.communication"}}</h3>
+	
+<div class="field" data-validation="telephoneMobile:not-empty|telephone-mobile">
+	<label>{{l "form.telephone-mobile"}}</label>
+	<div class="ui input left icon">
+		<i class="phone icon"></i>
+		<ui-input type="text" value={{profile.telephoneMobile}} />
+	</div>
+</div>
+	
+
+{{!-- ONLY FOR CANDIDATES --}}
+{{#if profile.isCandidate}}
+
+	{{!-- ENTREPRENEURSHIP --}}
+	{{#if profile.canBeEntrepreneur}}
+
+		<h3 class="ui dividing header">{{l "form.group.entrepreneur"}}</h3>
+		
+		{{#unless profile.shouldBeEntrepreneur}}
+			<div class="field">
+				<hh-checkbox value={{profile.isEntrepreneur}}>{{l "form.is-entrepreneur"}}</hh-checkbox>
+			</div>
+		{{/unless}}
+
+
+		{{#if profile.isEntrepreneur}}
+
+			<div class="field" data-validation="chamberOfCommerceRegistrationNumber:kvk-nummer">
+				<label>{{l "form.chamber-of-commerce-registration-number"}}</label>
+				<input type="text" value={{profile.chamberOfCommerceRegistrationNumber}}>
+			</div>
+
+		{{/if}}
+		
+
+	{{/if}}
+
+
+	{{!-- VERVOER --}}
+	<h3 class="ui dividing header">{{l "form.group.transport"}}</h3>
+
+	{{#if profile.isStudent}}
+		<div class="field">
+			<hh-checkbox value={{profile.hasTrainPass}}>{{l "form.has-train-pass"}}</hh-checkbox>
+		</div>
+	{{/if}}
+
+	<div class="field">
+		<hh-checkbox value={{profile.hasDriversLicense}}>{{l "form.has-drivers-license"}}</hh-checkbox>
+	</div>
+	<div class="field">
+		<hh-checkbox value={{profile.hasCar}}>{{l "form.has-car"}}</hh-checkbox>
+	</div>
+
+{{/if}}
+
+<br>
+
+{{#unless profileIsNew}}
+
+	<div class="field">
+		<label>{{l "form.how-did-you-find-us"}}</label>
+		<hh-enum-select key="how-did-you-find-us.{{if (equal profile.primaryType.type 'Client') "client" "candidate"}}" value={{profile.howDidYouFindUs}} />
+	</div>
+
+{{/unless}}

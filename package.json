@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "error-stack-parser": "^2.0.2",
     "lodash": "^4.17.11",
     "xml2js": "^0.4.19"
   }

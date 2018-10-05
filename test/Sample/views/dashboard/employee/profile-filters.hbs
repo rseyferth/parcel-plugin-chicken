@@ -1,0 +1,97 @@
+<div class="content">
+
+	<div class="ui divided grid">
+		<div class="eight wide column">
+			<h4 class="ui grey dividing header">
+				<i class="hh hh-assistent icon"></i>
+				{{l "candidates"}}
+			</h4>
+			<div class="ui relaxed list">
+
+				{{#each candidateFilters as |filter|}}
+
+					<a class="item" {{linkTo "employee.profile.candidate" query=(concat "filter=" filter.slug)}}>
+						{{filter.title}}
+					</a>
+
+				{{/each}}
+
+			</div>				
+			<h4 class="ui grey dividing header">
+				<i class="hh hh-huisarts icon"></i>
+				{{l "clients"}}
+			</h4>
+			<div class="ui relaxed list">
+
+				{{#each clientFilters as |filter|}}
+
+					<a class="item" {{linkTo "employee.profile.client" query=(concat "filter=" filter.slug)}}>
+						{{filter.title}}
+					</a>
+
+				{{/each}}
+
+			</div>				
+		</div>
+		<div class="eight wide column">
+			<h4 class="ui grey dividing header">
+				<i class="hospital icon"></i>
+				{{l "companies"}}
+			</h4>
+			<div class="ui relaxed list">
+
+				{{#each companyFilters as |filter|}}
+
+					<a class="item" {{linkTo "employee.company.index" query=(concat "filter=" filter.slug)}}>
+						{{filter.title}}
+					</a>
+
+				{{/each}}
+
+			</div>				
+		</div>
+ 
+		<div class="eight wide column">
+
+			<h5 class="ui grey dividing header">
+				<i class="search icon"></i>
+				{{l "search-profile"}}
+			</h5>
+			<ui-dropdown value={{$.jumpToProfile}} 
+				source="/profiles?search={query}&page[size]=8" 
+				value-attribute="userEmail" text-attribute="typeAndName" name-attribute="typeAndName" class="search selection fluid" 
+				use-model-as-value=true>
+				<i class="dropdown icon"></i>
+				<div class="default text"></div>
+				<div class="menu">
+				</div>
+			</ui-dropdown>
+
+		</div>
+ 
+		<div class="eight wide column">
+
+			<h5 class="ui grey dividing header">
+				<i class="search icon"></i>
+				{{l "search-company"}}
+			</h5>
+			<ui-dropdown value={{$.jumpToCompany}} 
+				source="/companies?search={query}&page[size]=8" 
+				value-attribute="id" text-attribute="name" name-attribute="name" class="search selection fluid" 
+				use-model-as-value=true>
+				<i class="dropdown icon"></i>
+				<div class="default text"></div>
+				<div class="menu">
+				</div>
+			</ui-dropdown>
+
+		</div>
+
+	</div>
+
+
+
+
+	
+	
+</div>

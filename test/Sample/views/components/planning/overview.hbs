@@ -1,0 +1,96 @@
+<header>
+    
+    <div class="left">
+
+        <div class="ui icon menu">
+            {{#unless onlyOwnPlanning}}
+                <div class="range item">
+                    <i class="zoom icon"></i>
+                    <input type="range" min="80" max="400" value={{columnWidth}}>
+                </div>
+            {{/unless}}
+            <hh-planning-filter-menu class="item" tasks={{tasks}} />
+        </div>
+
+    </div>
+
+    <h3 class="date">
+        {{#if dayTitle}}
+            <div class="title">{{dayTitle}}</div>
+            <div class="sub">{{momentFormat date "dddd LL"}}</div>
+        {{else}}
+            {{momentFormat date "dddd LL"}}
+        {{/if}}
+    </h3>
+
+    <div class="right">
+        
+        <div class="ui icon menu">
+
+            <a class="item" {{action "today"}}>{{l "header.today"}}</a>
+            <a class="item" title={{l "header.previous-day"}} {{action "previousDay"}}><i class="left chevron icon"></i></a>
+            <a class="item" title={{l "header.next-day"}} {{action "nextDay"}}><i class="right chevron icon"></i></a>
+
+        </div>
+    </div>
+
+
+</header>
+
+<div class="planning-columns {{if onlyOwnPlanning "only-own-planning" ""}} {{if isLoading "loading" ""}}">
+
+    <div class="profiles">
+
+        <div class="profile-columns">
+
+            {{#each columns as |column|}}
+
+                {{!-- 
+                ██████╗ ██████╗  ██████╗ ███████╗██╗██╗     ███████╗
+                ██╔══██╗██╔══██╗██╔═══██╗██╔════╝██║██║     ██╔════╝
+                ██████╔╝██████╔╝██║   ██║█████╗  ██║██║     █████╗  
+                ██╔═══╝ ██╔══██╗██║   ██║██╔══╝  ██║██║     ██╔══╝  
+                ██║     ██║  ██║╚██████╔╝██║     ██║███████╗███████╗
+                ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝ --}}
+
+            
+                <div class="profile column {{if column.isCollapsed "collapsed" ""}}" profile-id={{column.profile.id}}>
+
+                    <h4 {{action "toggleColumn" column}}>
+                        {{#if column.profile}}
+                            <img src={{column.profile.avatarUrl}} class="ui avatar image">
+                            {{#unless column.isCollapsed}}
+                                {{column.profile.firstName}}
+                                {{#if column.tasks}}
+                                    ({{count column.tasks}})
+                                {{/if}}
+                            {{/unless}}
+                        {{else}}
+                            <i class="large question circle icon"></i>
+                            {{#unless unassigned.isCollapsed}}
+                                {{l "unassigned.title"}}
+                            {{/unless}}
+                        {{/if}}
+                    </h4>
+
+                    <section class="tasks">
+                        
+                        <hh-planning-task-list 
+                            allow-card-links=false
+                            profile={{column.profile}}
+                            due-date={{date}}
+                            tasks={{column.tasks}} />
+
+
+                    </section>
+
+
+
+                </div>
+            {{/each}}
+            
+        </div>
+
+    </div>
+
+</div>

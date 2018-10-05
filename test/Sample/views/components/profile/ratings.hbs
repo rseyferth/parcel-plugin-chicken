@@ -1,0 +1,281 @@
+<div class="ui comments references">
+	<h3>
+		{{#if showIcon}}
+			<i class="star half empty icon"></i>
+		{{/if}}
+		{{l "title"}} 
+        {{#if isLoading}}
+		    <i class="loading spinner icon"></i>
+        {{/if}}
+	</h3>
+    {{#unless isLoading}}
+    
+        {{!-- 
+        ███████╗████████╗ █████╗ ████████╗███████╗
+        ██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██╔════╝
+        ███████╗   ██║   ███████║   ██║   ███████╗
+        ╚════██║   ██║   ██╔══██║   ██║   ╚════██║
+        ███████║   ██║   ██║  ██║   ██║   ███████║
+        ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+                                                  
+         --}}
+        <div class="ui tiny mini-text statistics">
+            {{#unless (either averageReviewRating averageCancellationRating averageSurveyRating)}}
+                <div class="statistic"><div class="value">
+                    {{!-- Filler --}}                        
+                </div></div>
+            {{/unless}}
+            {{#if averageReviewRating}}
+                <div class="statistic">
+                    <div class="value">
+                        <i class="yellow star icon"></i>
+                        {{number averageReviewRating 1}}
+                    </div>
+                    <div class="label">
+                        {{l "average-review-rating"}}
+                    </div>
+                </div>
+            {{/if}}                                   
+            {{#if averageCancellationRating}}
+                <div class="statistic">
+                    <div class="value">
+                        <i class="red star icon"></i>
+                        {{number averageCancellationRating 1}}
+                    </div>
+                    <div class="label">
+                        {{l "average-cancellation-rating"}}
+                    </div>
+                </div>
+            {{/if}}                                   
+            {{#if averageSurveyRating}}
+                <div class="statistic">
+                    <div class="value">
+                        <i class="blue star icon"></i>
+                        {{number averageSurveyRating 1}}
+                    </div>
+                    <div class="label">
+                        {{l "average-survey-rating"}}
+                    </div>
+                </div>
+            {{/if}}                                   
+        </div>
+
+    {{/unless}}
+    {{#unless showForm}}
+        <hh-expandable height={{maxHeight}} auto-update=50>
+            
+            {{!-- 
+            ████████╗ █████╗ ██████╗ ███████╗
+            ╚══██╔══╝██╔══██╗██╔══██╗██╔════╝
+               ██║   ███████║██████╔╝███████╗
+               ██║   ██╔══██║██╔══██╗╚════██║
+               ██║   ██║  ██║██████╔╝███████║
+               ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚══════╝
+                                             
+             --}}
+
+             {{#unless _.isLoading}}
+  
+                <ui-tabs menu-class="ui small secondary pointing menu">
+
+                    <ui-tab title={{l "reviews.title" count=(count reviews)}}>
+                        
+                        {{!-- REVIEWS --}}
+                        {{#each _.reviews as |reference|}}
+                            
+                            <hh-profile-ratings-reference reference={{reference}} />
+
+                        {{/each}}
+                        {{#unless _.reviews}}
+                            <p>{{l "reviews.none"}}</p>
+                        {{/unless}}
+
+                        <br>
+                        <button class="ui fluid button" {{action "showForm"}}>{{l "create.button"}}</button>
+
+                       
+                    </ui-tab>
+                    <ui-tab title={{l "cancellations.title" count=(count cancellations)}}>
+
+                        {{!-- CANCELLATIONS --}}
+                        {{#each _.cancellations as |reference|}}
+                            
+                            <hh-profile-ratings-reference reference={{reference}} />
+
+                        {{/each}}                     
+                        {{#unless _.cancellations}}
+                            <p>{{l "cancellations.none"}}</p>
+                        {{/unless}}
+                        
+                    </ui-tab>
+                    <ui-tab title={{l "surveys.title" count=(count surveyResponses)}}>
+
+                        {{!-- 
+                        ███████╗██╗   ██╗██████╗ ██╗   ██╗███████╗██╗   ██╗███████╗
+                        ██╔════╝██║   ██║██╔══██╗██║   ██║██╔════╝╚██╗ ██╔╝██╔════╝
+                        ███████╗██║   ██║██████╔╝██║   ██║█████╗   ╚████╔╝ ███████╗
+                        ╚════██║██║   ██║██╔══██╗╚██╗ ██╔╝██╔══╝    ╚██╔╝  ╚════██║
+                        ███████║╚██████╔╝██║  ██║ ╚████╔╝ ███████╗   ██║   ███████║
+                        ╚══════╝ ╚═════╝ ╚═╝  ╚═╝  ╚═══╝  ╚══════╝   ╚═╝   ╚══════╝
+                                                                                   
+                         --}}
+                        
+                        {{#each surveyResponses as |response|}}
+                            
+                            <div class="comment">
+                                <div class="avatar">
+                                    {{#if response.filledInByProfile}}
+                                        <img src={{response.filledInByProfile.avatarUrl}}>				
+                                    {{/if}}
+                                </div>
+
+                                <div class="content">
+                                    <span class="author">
+                                        {{#if response.company}}
+                                            <a {{linkTo "employee.company.show" companyId=response.companyId}}>
+                                                {{response.company.name}}
+                                            </a>
+                                            {{#if response.filledInByProfile}}
+                                                ({{response.filledInByProfile.name}})
+                                            {{/if}}                                        
+                                        {{/if}}
+                                    </span>
+                                    <div class="metadata">
+                                        <span class="date">{{momentFormat response.createdAt "LL"}}</span>                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="ui small table">
+                                <thead>
+                                    <tr>
+                                        <th>{{l "surveys.question"}}</th>
+                                        <th>{{l "surveys.rating"}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each response.answers as |answer|}}
+
+                                        <tr>
+                                            <td>{{answer.question.shortTitle}}</td>
+                                            <td class="collapsing">
+                                                {{#if answer.rating}}
+                                                    <ui-rating class="small star" value={{answer.rating}} ui-interactive=false />
+                                                {{else}}
+                                                    {{l "surveys.no-rating"}}
+                                                {{/if}}
+                                            </td>
+                                        </tr>
+
+                                    {{/each}}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>{{l "surveys.average"}}</th>
+                                        <th>
+                                            {{number response.averageRating 1}}
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        {{/each}}
+
+
+                    </ui-tab>
+
+                </ui-tabs>
+
+
+                
+            {{/unless}}
+
+        </hh-expandable>
+    {{/unless}}
+
+    {{#if allowCreate}}
+
+        <br>    
+        {{#if showForm}}
+
+            {{!-- 
+             ██████╗██████╗ ███████╗ █████╗ ████████╗███████╗    ██████╗ ███████╗███████╗███████╗██████╗ ███████╗███╗   ██╗ ██████╗███████╗
+            ██╔════╝██╔══██╗██╔════╝██╔══██╗╚══██╔══╝██╔════╝    ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝████╗  ██║██╔════╝██╔════╝
+            ██║     ██████╔╝█████╗  ███████║   ██║   █████╗      ██████╔╝█████╗  █████╗  █████╗  ██████╔╝█████╗  ██╔██╗ ██║██║     █████╗  
+            ██║     ██╔══██╗██╔══╝  ██╔══██║   ██║   ██╔══╝      ██╔══██╗██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗██╔══╝  ██║╚██╗██║██║     ██╔══╝  
+            ╚██████╗██║  ██║███████╗██║  ██║   ██║   ███████╗    ██║  ██║███████╗██║     ███████╗██║  ██║███████╗██║ ╚████║╚██████╗███████╗
+             ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝
+                                                                                                                                           
+            --}}
+            <hh-form model={{formReference}} on-saved="referenceSaved">
+
+                <div class="field">
+                    <label>{{l "form.source"}}</label>
+                    <hh-enum-select value={{_.formReference.source}} key="profile-reference-source" icons=true />
+                </div>
+                
+                {{#if (equal _.formReference.source "Client")}}
+
+                    <div class="field">
+                        <label>{{l "form.company"}}</label>
+                        <ui-dropdown value={{_.formReference.relatedCompany}} 
+                            source="/companies?search={query}&page[size]=8&include=primary_contact_profile,profiles" 
+                            value-attribute="id" text-attribute="name" name-attribute="name" class="search selection fluid" 
+                            use-model-as-value=true>
+                            <i class="dropdown icon"></i>
+                            <div class="default text"></div>
+                            <div class="menu">
+                            </div>
+                        </ui-dropdown>
+                    </div>
+
+                    {{#if _.formReference.relatedCompany}}
+
+                        <div class="field">
+                            <label>{{l "form.company-contact-profile"}}</label>
+                            <hh-model-dropdown
+                                options={{_.formReference.relatedCompany.profiles}} 
+                                value={{_.formReference.relatedCompanyContactProfile}}                                
+                                title-attribute="name" />
+                        </div>
+                    
+                    {{/if}}
+
+
+                {{/if}}
+
+                {{!-- <div class="field">
+                    <label>{{l "form.type"}}</label>
+                    <hh-enum-select value={{_.formReference.type}} key="profile-reference-type" icons=true />
+                </div> --}}
+
+                <div class="field" data-validation="date">
+                    <label>{{l "form.date"}}</label>
+                    <ui-calendar ui-start-mode="month" ui-type="date" value={{_.formReference.date}} />
+                </div>
+
+                <div class="field" data-validation="comments">
+                    <label>{{l "form.comments"}}</label>
+                    <ui-textarea value={{_.formReference.comments}} rows=3></ui-textarea>		
+                </div>
+
+                <div class="field">
+                    <label>{{l "form.rating"}}</label>
+                    <ui-rating class="huge star" ui-clearable=true value={{_.formReference.rating}} />
+                </div>
+
+                <div class="ui two buttons">
+                    <button class="ui positive button" type="submit">{{l (if _.formReference.is.new "form.create" "form.save")}}</button>
+                    <div class="or" data-text={{t "words.or"}}></div>
+                    <button class="ui button" type="button" {{action "cancelForm"}}>{{l "form.cancel"}}</button>
+                </div>
+
+
+            </hh-form>
+
+        {{/if}}
+
+      
+
+    {{/if}}
+</div>

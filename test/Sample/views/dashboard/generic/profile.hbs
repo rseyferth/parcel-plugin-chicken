@@ -1,0 +1,36 @@
+<div class="content my-profile">
+    <img class="right floated avatar bordered ui image" src={{profile.avatarUrl}}>
+	<div class="header">
+		<h3>{{profile.name}}</h3>
+	</div>
+
+	{{#if (both profile.isCandidate (not profile.isWaarnemer) (not profile.resumeFilepath))}}
+
+		<p>{{l "no-resume.intro"}}</p>
+	
+	{{/if}}
+
+	<div class="ui two divided buttons">
+	
+		<button {{linkTo "my-profile"}} class="ui button">
+			{{l "button"}}
+		</button>
+
+		{{#if (both profile.isWaarnemer invoices)}}
+
+			<button {{linkTo "my-profile.invoices"}} class="ui button">
+				{{l "invoices.button"}}
+			</button>
+
+		{{else if (both profile.isCandidate (not profile.isWaarnemer) (not profile.resumeFilepath))}}
+
+			<button {{linkTo "my-profile.resume"}} class="ui blue button">
+				{{l "no-resume.button"}}
+			</button>
+
+		{{/if}}
+
+
+	</div>
+
+</div>

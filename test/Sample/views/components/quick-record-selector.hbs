@@ -1,0 +1,24 @@
+<ui-modal id="jobSearchModal" class="small basic">
+	
+	<div class="ui icon header">
+		<i class="hh hh-zoek-werk icon"></i>
+		{{t "components.quick-record-selector.job-search.title"}}
+	</div>
+	<div class="ui center aligned content {{if _.isBusy "loading"}} ">
+		<p>{{t "components.quick-record-selector.job-search.intro"}}</p>
+		<form {{action "findJob" _.jobId}}>
+			<div class="ui action input">
+				<input type="text" value={{_.jobId}}>
+				<button class="ui primary icon submit button">
+					<i class="search icon"></i>				
+				</button>
+			</div>
+			{{#if _.error}}
+				<div class="ui inverted negative message">
+					<p>{{_.error}}</p>				
+				</div>
+			{{/if}}
+		</form>
+	</div>
+
+</ui-modal>

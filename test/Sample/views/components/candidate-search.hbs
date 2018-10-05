@@ -1,0 +1,128 @@
+<hh-remote-view source={{source}} key="candidate-search" id="remoteView">
+
+	<div class="ui inverted blue segment">
+			
+		<div class="ui inverted blue form">
+			<div class="two fields">
+				<div class="field">
+					<label>{{l "form.limit"}}</label>				
+					<hh-enum-select key="candidate-search.selection" value={{_.limit}} />					
+				</div>
+				<div class="field">
+					<label>{{l "form.type"}}</label>
+					<hh-enum-select key="candidate-search.type" value={{_.broadcastType}} />
+				</div>
+			</div>
+			<button class="ui primary inverted fluid button {{if _.isBusy "loading" ""}}" {{action "send" _.limit _.broadcastType}}>
+				<i class="send icon"></i>
+				{{l "form.submit"}}
+			</button>			
+		</div>
+
+	</div>
+
+
+	{{#if showFilters}}
+
+		<hh-remote-filters filters={{filters}} />
+
+	{{/if}}
+
+	<hh-remote-export id="remoteExport" style="display: none;" on-complete="exportComplete" headers=true>
+
+		<hh-column header="Naam">name</hh-column>
+		<hh-column header="Mobiele telefoon">telephoneMobile</hh-column>				
+		<hh-column header="E-mailadres">userEmail</hh-column>
+
+	</hh-remote-export>
+
+	<div class="remote-content">
+
+		<table class="ui celled striped table">
+
+			<thead>
+				<tr class="top aligned">
+					<hh-remote-table-header>{{t 'attributes.profile.name'}}</hh-remote-table-header>						
+					<hh-remote-table-header header-sort-key="meta.combinedScore" initial-sort-direction="descending">
+						<ui-popup data-content="{{l "combined-score.label"}}">
+							{{l "combined-score.title"}} <i class="info circle icon"></i>
+						</ui-popup>
+					</hh-remote-table-header>
+					<hh-remote-table-header header-sort-key="meta.availabilityScore" initial-sort-direction="descending">
+						<ui-popup data-content="{{l "availability-score.label"}}">
+							{{l "availability-score.title"}} <i class="info circle icon"></i>
+						</ui-popup>
+					</hh-remote-table-header>
+					<hh-remote-table-header header-sort-key="meta.numberOfTimeslotsAvailable" initial-sort-direction="descending">
+						<ui-popup data-content="{{l "number-of-timeslots-available.label"}}">
+							{{l "number-of-timeslots-available.title"}} <i class="info circle icon"></i>
+						</ui-popup>
+					</hh-remote-table-header>
+					<hh-remote-table-header header-sort-key="meta.workedForCompanyBefore" initial-sort-direction="descending">
+						<ui-popup data-content="{{l "worked-for-company-before.label"}}">
+							{{l "worked-for-company-before.title"}} <i class="info circle icon"></i>
+						</ui-popup>
+					</hh-remote-table-header>
+					<hh-remote-table-header header-sort-key="meta.relativeDistanceScore" initial-sort-direction="descending">
+						{{l "distance"}}
+					</hh-remote-table-header>
+				</tr>
+			</thead>
+
+			<tbody>
+				{{#if records}}
+					{{#each records as |profile|}}
+						<tr>
+							<td>
+								<hh-profile profile={{profile}} />
+							</td>
+							<td>
+								<div class="ui statistic">
+									{{percentage profile.meta.combinedScore}}									
+								</div>
+							</td>
+							<td>
+								{{numberFormat (round profile.meta.availabilityScore 1)}} 
+								<span class="percentage">{{percentage profile.meta.relativeAvailabilityScore}}</span>
+							</td>
+							<td>
+								{{profile.meta.numberOfTimeslotsAvailable}}
+								<span class="percentage">{{percentage profile.meta.relativeTimeslotsAvailable}}</span>
+							</td>
+							<td>
+								{{yesNo profile.meta.workedForCompanyBefore}}								
+							</td>
+							<td>
+								{{#if profile.meta.distance}}
+									{{t "words.x-km" km=profile.meta.distance}}
+									<span class="percentage">{{percentage profile.meta.relativeDistanceScore}}</span>
+								{{/if}}
+							</td>
+						</tr>
+
+					{{/each}}
+				{{else}}
+					
+				{{/if}}
+
+			</tbody>
+
+		</table>
+
+		<hh-remote-pagination cache-last-view=false />
+
+	</div>	
+
+</hh-remote-view>
+
+<ui-modal id="modalSaved" class="small">
+	<div class="header">
+		{{l "saved.title"}}
+	</div>
+	<div class="content">
+		<p>{{l "saved.intro"}}</p>
+	</div>
+	<div class="actions">
+		<div class="ui positive button">{{t "words.ok"}}</div>
+	</div>
+</ui-modal>

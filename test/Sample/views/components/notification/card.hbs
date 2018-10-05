@@ -1,0 +1,33 @@
+<div class="content">
+
+    {{#if showTime}}
+        <div class="time">{{momentFormat notification.createdAt 'LT'}}</div>
+    {{/if}}
+
+    <h4 class="ui header" {{action "gotoPage"}}>
+        {{{notification.title}}}
+    </h4>
+    <p>{{{notification.description}}}</p>
+
+    {{!-- Handled --}}
+    {{#if notification.handledByProfile}}
+        <p class="handled">
+            {{l "handled" by=notification.handledByProfile.firstName at=notification.handledAt}}
+        </p>
+    {{/if}}
+
+</div>
+<div class="ui three small buttons">
+    {{#unless notification.handledAt}}
+        <button class="ui green button" {{action "handle"}}>
+            <i class="hand point up icon"></i>
+            {{l "buttons.handle"}}
+        </button>
+    {{/unless}}
+    {{#if showDismiss}}
+        <button class="ui grey button" {{action "dismiss"}}>
+            <i class="close icon"></i>
+            {{l "buttons.dismiss"}}
+        </button>
+    {{/if}}    
+</div>

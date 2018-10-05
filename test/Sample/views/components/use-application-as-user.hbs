@@ -1,0 +1,28 @@
+<div class="ui container">
+	<div class="ui orange inverted secondary menu">		
+
+		<div class="item">
+			<i class="big spy icon"></i>
+			{{t "components.use-application-as-user.label"}}
+		</div>
+		<div class="item" style="min-width: 480px;">
+			
+			<ui-dropdown value={{profile}} source="/profiles?search={query}&pretend_to_be_user=false&include=user&page[size]=8" 
+				value-attribute="userEmail" text-attribute="typeAndName" name-attribute="typeAndName" class="search selection fluid small" 
+				use-model-as-value=true>
+				<i class="dropdown icon"></i>
+				<div class="default text"></div>
+				<div class="menu">
+				</div>
+			</ui-dropdown>
+		</div>
+		<a href="#" class="item" {{action "previewProfile" profile}}>
+			<i class="unhide icon"></i>
+			{{t "components.use-application-as-user.preview-profile"}}
+		</a>
+		<a href="#" class="item right" {{action "reset"}}>
+			<i class="user icon"></i> {{realUser.profile.name}}
+		</a>
+		
+	</div>
+</div>

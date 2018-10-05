@@ -1,0 +1,82 @@
+<div class="content">
+	
+	{{#if urgentJobs}}
+		
+		<h4 class="ui dividing header">
+			{{l "urgent-jobs"}}
+		</h4>
+		<div class="ui icon list relaxed">
+			{{#each urgentJobs as |job index|}}
+				{{#if (lt index maxUrgents)}}
+
+					<a class="item" {{linkTo "candidate.job.show" jobId=job.id}}>				
+						
+						<i class="big {{job.typeIcon}} icon"></i>
+						
+						<div class="content">
+							
+							<div class="header">{{job.formattedDates}}</div>
+							<div class="description">{{job.city}}</div>
+							
+						</div>					
+					</a>
+
+				{{/if}}
+
+			{{/each}}
+		</div>
+
+	{{/if}}
+	
+	{{#if newJobs}}
+		
+		<h4 class="ui dividing header">{{l "new-jobs"}}</h4>
+		<div class="ui icon list relaxed">
+			{{#each newJobs as |job index|}}
+				{{#if (lt index maxNew)}}
+
+					<a class="item" {{linkTo "candidate.job.show" jobId=job.id}}>				
+						
+						<i class="big {{job.typeIcon}} icon"></i>
+						
+						<div class="content">
+							
+							<div class="header">{{job.formattedDates}}</div>
+							<div class="description">{{job.city}}</div>
+							
+						</div>					
+					</a>
+
+				{{/if}}
+
+			{{/each}}
+		</div>
+
+	{{/if}}
+	
+	{{#if showAll}}
+		
+		<div class="ui icon list relaxed">
+			{{#each allJobs as |job index|}}			
+
+				<a class="item" {{linkTo "candidate.job.show" jobId=job.id}}>				
+					
+					<i class="big {{job.typeIcon}} icon"></i>
+					
+					<div class="content">
+						
+						<div class="header">{{job.formattedDates}}</div>
+						<div class="description">{{job.city}}</div>
+						
+					</div>					
+				</a>
+
+			{{/each}}
+		</div>
+
+	{{/if}}
+
+	<button class="ui fluid button" {{linkTo "candidate.job.index" filter=filter.slug}}>
+		{{l "button" filter=filter.title}}
+	</button>
+</div>

@@ -1,0 +1,91 @@
+{{#if isLoading}}
+    <i class="loading spinner icon"></i>
+{{else}}
+    {{#if categories}}
+
+        <ui-tabs menu-class="ui secondary pointing menu">
+
+            {{#each categories as |category|}}
+                <ui-tab title={{category.title}}>
+                
+                    <table class="ui striped table">
+                        <thead>
+                            <tr>
+                                <th>{{t "attributes.job.timeslot.date"}}</th>
+                                <th>{{t "attributes.job.timeslot.times"}}</th>
+                                {{#if category.showLocation}}
+                                    <th>{{t "attributes.job.location"}}</th>
+                                {{/if}}
+                                {{#if category.showCandidateRate}}
+                                    <th>{{t "attributes.job.timeslot.candidate-rate"}}</th>
+                                {{/if}}
+                                {{#if category.showBillableRate}}
+                                    <th>{{t "attributes.job.timeslot.billable-rate"}}</th>
+                                {{/if}}
+                                <th>{{l "bookings"}}</th>
+                                <th>{{t "attributes.job.timeslot.job-id"}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each category.timeslots as |timeslot|}}
+                                <tr class="labeled {{if timeslot.bookingTimeslots "positive-label" "negative-label"}}">
+                                    <td>{{momentFormat timeslot.date "LL"}}</td>
+                                    <td>{{timeslot.formattedTimes}}</td>
+                                    {{#if category.showLocation}}
+                                        <td>{{timeslot.job.location.name}}</td>
+                                    {{/if}}
+                                    {{#if category.showCandidateRate}}
+                                        <td>{{euro timeslot.candidateRate}}</td>
+                                    {{/if}}
+                                    {{#if category.showBillableRate}}
+                                        <td>{{euro timeslot.billableRate}}</td>
+                                    {{/if}}
+                                    <td class="celled">
+                                        {{#if timeslot.bookingTimeslots}}
+                                            {{#each timeslot.bookingTimeslots as |bookingTimeslot|}}
+
+                                                <div class="{{if bookingTimeslot.isCancelled "cancelled" ""}}">
+                                                    <hh-profile profile={{bookingTimeslot.booking.profileSummary}} class="large" />
+                                                    {{#unless bookingTimeslot.isCancelled}}
+                                                        {{#if user.profile.isEmployee}}
+                                                            &nbsp;<a class="ui tiny standard basic icon button" {{linkTo "employee.job.booking.edit" jobId=bookingTimeslot.jobId bookingId=bookingTimeslot.jobBookingId query=(object date=(momentFormat bookingTimeslot.from "YYYY-MM-DD"))}}>
+                                                                <i class="trash icon" title={{t "words.cancel"}}></i>
+                                                            </a>
+                                                        {{/if}}
+                                                    {{/unless}}
+                                                </div>
+                                            {{/each}}										
+                                        {{else}}
+                                            {{l "no-booking-yet"}}
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <a {{linkTo (concat (if user.profile.isEmployee "employee" "client")  ".job.show") companyId=timeslot.job.companyId jobId=timeslot.job.id}}>
+                                            #{{timeslot.job.id}}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+
+                    </table>
+
+                    <button class="ui primary fluid button" {{linkTo (concat (if user.profile.isEmployee "employee" "client")  ".job-timeslot.index") query=(object company=(concat _.company.id ":" _.company.name) jobTypeKey=(get (method category.timeslots "first") "job.jobTypeKey") fromDate=_.today)}}>
+                        <i class="calendar icon"></i>
+                        {{l "view-all-booking-timeslots"}}
+                    </button>
+                    
+                </ui-tab>
+            {{/each}}
+
+        </ui-tabs>
+
+    {{else}}
+
+        <p>{{l "no-timeslots"}}</p>
+        <button class="ui fluid button" {{linkTo "employee.job-timeslot.index" query=(object company=(concat company.id ":" company.name) fromDate=today untilDate=nextYear)}}>
+            {{l "view-all-booking-timeslots"}}
+        </button>
+
+    {{/if}}
+{{/if}}

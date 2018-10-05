@@ -1,0 +1,43 @@
+
+{{#if files}}
+
+	<div class="ui cards">
+	{{#each files as |file|}}
+		<div class="card">
+			{{#if file.thumbnailBase64}}
+				<div class="image">
+					<img src={{file.thumbnailBase64}}>
+				</div>
+			{{/if}}
+			<div class="content">
+				<div class="header">{{file.name}}</div>
+				<div class="meta">{{fileSize file.size}}</div>
+			
+				{{#unless file.complete}}	
+					<ui-progress value={{file.progress}} error={{file.errorMessage}}>
+						<div class="bar">
+							<div class="progress"></div>
+						</div>
+					</ui-progress>
+				{{/unless}}
+				{{#if file.errorMessage}}
+					<div class="ui error message">
+						{{file.errorMessage}}						
+					</div>
+				{{/if}}
+			</div>
+			{{#if file.complete}}
+			<div class="ui bottom attached button" {{action "deleteFile" file}}>
+				<i class="trash icon"></i>
+				{{options.dictRemoveFile}}
+			</div>
+			{{/if}}
+		</div>
+	{{/each}}
+	</div>
+
+{{else}}
+	
+	<i class="upload icon dz-message"></i>
+
+{{/if}}

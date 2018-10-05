@@ -1,0 +1,85 @@
+<button class="ui fluid primary button" {{action "show"}}>
+	{{l "open"}}
+</button>
+
+<ui-modal id="repeaterForm" class="ui large modal" 
+	ui-autofocus=false ui-closable=false
+	auto-center=true>
+
+	<i class="close icon"></i>
+
+	{{#unless _.showConfirmationScreen}}
+
+		<div class="header">
+			{{l "title"}}
+		</div>
+
+		<div class="content">	
+
+			<p>{{l "intro"}}</p>
+
+			<form class="ui form">
+
+				{{#if _.weekCalendar}}
+					
+					<div class="two fields">
+						<div class="field">
+							
+							<label>{{l "form.start-date"}}</label>
+							<ui-date-range-picker start-date={{_.startDate}} ui-single-date-picker=true />
+
+						</div>
+						<div class="field">
+							
+							<label>{{l "form.end-date"}}</label>
+							<ui-date-range-picker start-date={{_.endDate}} ui-single-date-picker=true />
+
+						</div>
+					</div>
+
+
+					<hh-calendar calendar={{_.weekCalendar}} 
+						allow-navigation=false
+						max-days-in-view=7
+						show-dates=false
+						show-months=false
+						show-repeater=false 
+						use-local-events=true
+						/>
+
+				{{/if}}
+
+				
+
+			</form>
+		</div>
+		<div class="actions">
+			<button class="ui primary button" {{action "apply"}}>{{l "form.actions.apply"}}</button>
+			<button class="ui cancel button">{{l "form.actions.cancel"}}</button>
+		</div>
+
+	{{else}}
+
+		<div class="header">
+			{{l "confirm.title"}}			
+		</div>
+		<div class="content">
+			<p>{{l "confirm.intro"}}</p>
+
+			<hh-expandable>
+				<ul class="ui bulleted list">
+					{{#each _.oldEvents as |event|}}
+						<li>{{momentFormat event.date "dddd LL"}} ({{momentFormat event.startsAt "LT"}} - {{momentFormat event.endsAt "LT"}}): {{event.title}}</li>
+					{{/each}}
+				</ul>
+			</hh-expandable>
+
+		</div>
+		<div class="actions">
+			<button class="ui red button" {{action "confirm" true}}>{{l "form.actions.overwrite"}}</button>
+			<button class="ui primary button" {{action "confirm" false}}>{{l "form.actions.keep"}}</button>
+		</div>
+
+	{{/unless}}
+
+</ui-modal>

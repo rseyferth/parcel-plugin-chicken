@@ -1,0 +1,11 @@
+{{yield}}
+{{#if isSorted}}
+
+    {{#if (equal parentSortDirection "descending")}}
+        <i class="blue sort numeric up icon"></i>
+
+    {{else}}
+        <i class="blue sort numeric down icon"></i>
+    {{/if}}
+
+{{/if}}

@@ -1,0 +1,43 @@
+<div class="avatar">
+    {{#if reference.relatedCompanyContactProfile}}
+        <img src={{reference.relatedCompanyContactProfile.avatarUrl}}>				
+    {{else if reference.createdByUser}}
+        <img src={{reference.createdByUser.profileSummary.avatarUrl}}>				
+    {{/if}}
+</div>
+<div class="content">
+    <span class="author">
+        {{#if reference.relatedCompany}}
+            <a {{linkTo "employee.company.show" companyId=reference.relatedCompanyId}}>
+                {{reference.relatedCompany.name}}
+            </a>
+            {{#if reference.relatedCompanyContactProfile}}
+                ({{reference.relatedCompanyContactProfile.name}})
+            {{/if}}
+        {{else if reference.createdByUser}}
+            {{reference.createdByUser.profileSummary.name}}
+        {{/if}}
+    </span>
+    <div class="metadata">
+        <span class="date">{{method reference.createdAt "calendar"}}</span>
+        <span class="source">
+            <i class="{{reference.sourceIcon}}"></i>
+            {{reference.sourceTitle}}
+        </span>
+        <span class="type">
+            <i class="{{reference.typeIcon}}"></i>
+            {{reference.typeTitle}}
+        </span>
+    </div>
+    <div class="text">
+        {{reference.comments}}<br>
+        <br>
+        <ui-rating class="star" value={{reference.rating}} ui-interactive=false /><br>
+    </div>
+    {{#if allowDelete}}
+        <div class="actions">
+            <a class="edit" {{action "editReference"}}>{{l "edit.button"}}</a>
+            <a class="delete" {{action "deleteReference"}}>{{l "delete.button"}}</a>
+        </div>
+    {{/if}}
+</div>			

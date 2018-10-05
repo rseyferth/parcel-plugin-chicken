@@ -1,0 +1,26 @@
+<div class="expandable-content">
+
+	{{yield}}
+
+</div>
+{{#if tooBig}}
+
+	{{#unless hideButton}}
+		{{#if isExpanded}}
+
+			<button class="ui fluid collapse button" {{action "collapse"}}>
+				<i class="chevron up icon"></i>
+				{{t "components.expandable.collapse"}}
+			</button>
+
+		{{else}}
+
+			<button class="ui fluid expand button" {{action "expand"}}>
+				<i class="chevron down icon"></i>
+				{{t "components.expandable.expand"}}
+			</button>
+
+		{{/if}}
+	{{/unless}}
+
+{{/if}}

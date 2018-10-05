@@ -1,0 +1,32 @@
+<div class="background-container hh-image-bar">		
+
+	<hh-image-slider images={{sliderImages}}></hh-image-slider>
+
+    <div class="ui container">
+		<h1 class="hh-logo">
+			<a {{linkTo "public.home"}} title={{t "public.home.logo"}}>
+				<img src="../../../assets/huisartsenhulp/hh-logo.png" alt={{t "public.home.logo"}}>
+			</a>
+		</h1>
+        <h2 align="center">{{title}}</h2>
+        {{#if buttons}}
+            <div class="{{uiNumber (count buttons)}} buttons">
+
+                {{#each buttons as |button|}}
+
+                    <div class="{{if button.isActive "active" ""}} hh-icon-button">
+                        <a class="{{if (equal (count buttons) 5) "large" "big"}} circular white ui icon button" {{linkTo button.route}} title={{button.caption}}>
+                            <i class="huge blue {{button.icon}} icon"></i>
+                        </a>
+                        <div class="label">{{button.caption}}</div>
+                    </div>
+                    
+                {{/each}}
+
+            </div>
+        {{/if}}
+            
+
+    </div>
+
+</div>

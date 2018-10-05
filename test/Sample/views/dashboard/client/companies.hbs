@@ -1,0 +1,30 @@
+<div class="content">
+    <div class="ui very relaxed divided list">
+        {{#each companies as |company|}}
+            <div class="item">
+
+                <div class="right floated content">
+                    {{!-- Rooster button --}}
+                    <a class="ui mini button" {{linkTo "client.job-timeslot.index" query=(object company=(concat company.id ":" company.name) fromDate=today)}}>
+                        <i class="calendar icon"></i>
+                        {{l "roster"}}
+                    </a>
+                </div>
+
+                <i class="blue address book icon"></i>
+                <div class="content">
+                    <a class="header" {{linkTo "client.company.show" companyId=company.id}}>{{company.name}}</a>
+                    <div class="description">
+                        {{{company.officeAddress.asHtml}}}
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+    <br>
+    <a class="ui fluid primary button" {{linkTo "client.job-timeslot.index" query=(object fromDate=today)}}>
+        <i class="calendar icon"></i>
+        {{l "complete-roster"}}
+    </a>
+
+</div>

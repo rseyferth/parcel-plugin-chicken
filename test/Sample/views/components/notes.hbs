@@ -1,0 +1,50 @@
+<div class="ui comments">
+	<h3>
+		{{#if showIcon}}
+			<i class="talk icon"></i>
+		{{/if}}
+		{{title}} 
+		<span class="count">{{noteCount}}</span>
+	</h3>
+	<hh-expandable height={{maxHeight}}>
+		{{#each _.notes as |note|}}
+			<div class="comment">
+				{{#if note.createdByUser}}
+					<a href="#" class="avatar" {{action "clickProfile" note.createdByUser.profileSummary}}>
+						<img src={{note.createdByUser.profileSummary.avatarUrl}}>				
+					</a>					
+				{{/if}}
+				<div class="content">
+					<span class="author">
+						{{#if note.createdByUser}}
+							{{note.createdByUser.profileSummary.name}}
+						{{else}}
+							{{note.createdByName}}
+						{{/if}}
+					</span>
+					<div class="metadata">
+						<span class="date">{{method note.createdAt "calendar"}}</span>
+					</div>
+					<div class="text">
+						{{note.message}}
+					</div>
+					{{#if allowDelete}}
+						<div class="actions">
+							<a class="delete" {{action "deleteNote" note}}>{{t "words.delete"}}</a>
+						</div>
+					{{/if}}
+				</div>			
+			</div>
+		{{/each}}
+	</hh-expandable>
+</div>
+{{#if allowCreate}}
+	<form class="ui form {{if isSaving "loading"}}" {{action "createNote"}}>
+		<ui-textarea value={{newNote.message}} placeholder={{t "components.notes.create.placeholder"}} rows=3></ui-textarea>
+		<button class="ui fluid submit {{unless newNote.message "disabled"}} button">{{t "components.notes.create.button"}}</button>
+		
+		<error-message error={{saveError}} /> 
+
+	</form>
+
+{{/if}}

@@ -1,0 +1,87 @@
+<div class="ui blue inverted segment">
+    
+    <div class="ui inverted form">
+
+        <div class="fields">
+
+            <div class="five wide field">
+
+                <i class="hh hh-assistent icon"></i>
+
+                <hh-checkbox value={{useProfile}}>{{l "profile"}}</hh-checkbox>
+                {{#if useProfile}}
+                    <ui-dropdown value={{profile}} 
+						source="/profiles?search={query}&page[size]=8&filter[is_candidate]=1" 
+						value-attribute="userEmail" text-attribute="name" name-attribute="name" class="search selection fluid" 
+						use-model-as-value=true>
+						<i class="dropdown icon"></i>
+						<div class="default text"></div>
+						<div class="menu">
+						</div>
+					</ui-dropdown>
+                {{/if}}
+
+            </div>
+
+            {{#if (either user.profile.isEmployee user.profile.hasMultipleCompanies)}}
+
+                <div class="five wide field">
+
+                    <i class="hospital icon"></i>
+
+                    <hh-checkbox value={{useCompany}}>{{l "company"}}</hh-checkbox>
+                    {{#if useCompany}}
+                        <ui-dropdown value={{company}} 
+                            source="/companies?search={query}&filter[type]=Normal&page[size]=8" 
+                            value-attribute="id" text-attribute="name" name-attribute="name" class="search selection fluid" 
+                            use-model-as-value=true>
+                            <i class="dropdown icon"></i>
+                            <div class="default text"></div>
+                            <div class="menu">
+                            </div>
+                        </ui-dropdown>
+                    {{/if}}
+
+                </div>
+
+            {{/if}}
+
+            <div class="six wide field">
+
+                <i class="suitcase icon"></i>
+
+                <hh-checkbox value={{useJobTypeKey}}>{{l "job-type"}}</hh-checkbox>
+                {{#if useJobTypeKey}}
+                    <hh-enum-select key="job-type" value={{jobTypeKey}} />
+                {{/if}}
+
+            </div>
+        </div>
+        <div class="fields">
+
+            <div class="five wide field">
+
+                 <i class="add to calendar icon"></i>
+
+                <hh-checkbox value={{useFromDate}}>{{l "from-date"}}</hh-checkbox>
+                {{#if useFromDate}}
+                    <ui-calendar ui-start-mode="month" ui-type="date" value={{fromDate}} />
+                {{/if}}
+
+            </div>
+            <div class="five wide field">
+
+                <i class="delete to calendar icon"></i>
+
+                <hh-checkbox value={{useUntilDate}}>{{l "until-date"}}</hh-checkbox>
+                {{#if useUntilDate}}
+                    <ui-calendar ui-start-mode="month" ui-type="date" value={{untilDate}} />
+                {{/if}}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,15 @@
+<div class="{{mobileWidth}} wide mobile {{tabletWidth}} wide tablet {{width}} wide computer column main-content">
+
+	<hh-breadcrumb attributes={{attributes}} />
+	<h2 class="ui header">
+		{{#if icon}}
+			<i class="icon {{icon}}"></i>
+		{{/if}}
+		<div class="content">
+			{{title}}			
+		</div>
+	</h2>
+
+	{{yield}}
+
+</div>

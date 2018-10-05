@@ -1,0 +1,8 @@
+{{#each steps as |step|}}
+	<div class="step {{if step.isActive "active"}} {{if step.isCompleted "completed"}}">
+		<div class="content">
+			<div class="title">{{step.title}}</div>
+			<div class="description">{{step.description}}</div>			
+		</div>
+	</div>
+{{/each}}

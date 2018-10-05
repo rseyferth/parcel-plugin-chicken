@@ -1,0 +1,22 @@
+{{#if isLoading}}
+    <i class="loading spinner icon"></i>
+{{else if contacts}}
+
+    <div class="ui list">
+        {{#each contacts as |profile|}}
+            <div class="item">
+                <img src={{profile.avatarUrl}} class="ui avatar image">
+                <div class="content">
+                    {{#if clickable}}
+                        <a class="header" {{action "previewProfile" profile}}>{{profile.name}}</a>
+                    {{else}}
+                        <div class="header">{{profile.name}}</div>
+                    {{/if}}
+                    <a href="mailto:{{profile.userEmail}}">{{profile.userEmail}}</a>
+                    <p>{{profile.telephoneMobile}}</p>
+                 </div>
+            </div>
+        {{/each}}
+    </div>
+
+{{/if}}

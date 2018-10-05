@@ -1,0 +1,150 @@
+{{#each types as |type|}}
+
+	<div class="certification-group {{type.key}}">
+
+		{{#if showHeaders}}
+			<h3 class="ui dividing header">{{l (concat "type." type.key)}}</h3>
+		{{/if}}
+
+		{{#if (not type.hasProperties)}}
+
+			<div class="ui two column skills grid">
+
+				{{#each type.certifications as |cert|}}
+
+					<div class="column">
+						<hh-checkbox value={{cert.isSelected}}>{{cert.title}}</hh-checkbox>
+					</div>
+
+				{{/each}}
+				
+			</div>
+		{{else}}
+
+			{{!-- EXISTING CERTIFICATIONS --}}
+			{{#each type.profileCertifications as |profileCert|}}
+
+				<hh-form-section class="certification" model={{profileCert}}>
+				
+					<h4 class="ui blue header">
+						<i class="{{profileCert.certification.typeIcon}} icon"></i>
+						{{profileCert.certification.title}}
+					</h4>
+					<i class="trash icon" {{action "removeCertification" profileCert}}></i>				
+
+					{{#if (equal profileCert.certification.type "Education")}}
+						
+						{{!-- EDUCATION --}}
+
+						<div class="field" data-validation={{if profileCert.is.new "educationInstitute" ""}} data-validation-model={{profileCert}}>
+							<label>{{l "education.institute"}}</label>
+							<hh-enum-select options={{profileCert.certification.instituteOptions}} value={{profileCert.educationInstitute}} />
+						</div>
+
+						<div class="field">
+							<hh-checkbox value={{profileCert.educationCompleted}} class="toggle">
+								{{l "education.completed"}}
+							</hh-checkbox>
+						</div>
+
+						{{#if profileCert.educationCompleted}}
+
+							<div class="two fields">
+								<div class="field">
+									<label>{{l "education.diploma"}}</label>
+									<hh-file-input value={{profileCert.educationDiplomaFilepath}} type="Document" />
+								</div>
+								<div class="field">
+									<label>{{l "education.graduation-date"}}*</label>
+									<ui-calendar value={{profileCert.educationGraduationDate}} ui-type="date" ui-start-mode="year" />
+								</div>
+							</div>
+
+						{{else}}
+
+							<div class="two fields">
+								<div class="field" data-validation="educationYear">
+									<label>{{l "education.year"}}</label>
+									<hh-enum-select options={{profileCert.certification.educationYearOptions}} value={{profileCert.educationYear}} />
+								</div>
+								<div class="field">
+									<label>{{l "education.expected-graduation-date"}}</label>
+									<ui-calendar value={{profileCert.educationGraduationDate}} ui-type="date" ui-start-mode="year" />
+								</div>
+							</div>
+
+						{{/if}}
+
+
+					{{else if (equal profileCert.certification.type "Certificate")}}
+			
+						{{!-- CERTIFICAAT --}}
+
+						{{#if (notEqual profileCert.certification.certificateHasNumber "No")}}
+							<div class="field" data-validation={{if (equal profileCert.certification.certificateHasNumber "Yes") "certificateNumber" ""}}>
+								<label>{{l "certificate.number"}}{{if (equal profileCert.certification.certificateHasNumber "Yes") "*"}}</label>
+								<input type="text" value={{profileCert.certificateNumber}}>
+							</div>
+						{{/if}}
+
+						{{#if (notEqual profileCert.certification.certificateHasExpirationDate "No")}}
+							<div class="field" data-validation={{if (equal profileCert.certification.certificateHasExpirationDate "Yes") "certificateExpirationDate" ""}}>
+								<label>{{l "certificate.expiration-date"}}{{if (equal profileCert.certification.certificateHasExpirationDate "Yes") "*"}}</label>
+								<ui-calendar value={{profileCert.certificateExpirationDate}} ui-type="date" ui-start-mode="year" />
+							</div>
+						{{/if}}
+
+						{{#if (notEqual profileCert.certification.certificateHasDocument "No")}}
+							<div class="field" data-validation={{if (equal profileCert.certification.certificateHasDocument "Yes") "certificateDocumentFilepath" ""}}>
+								<label>{{l "certificate.document"}}{{if (equal profileCert.certification.certificateHasDocument "Yes") "*"}}</label>
+								<hh-file-input value={{profileCert.certificateDocumentFilepath}} type="Document" />
+							</div>
+						{{/if}}
+
+					{{else if (equal profileCert.certification.type "WorkExperience")}}
+			
+						{{!-- WORK EXPERIENCE --}}
+
+						<div class="field" data-validation="workExperienceYears">
+							<label>{{l "work-experience.years"}}</label>
+							<input type="number" step="1" min="0" max="50" value={{profileCert.workExperienceYears}} />
+						</div>
+						<div class="field">
+							<hh-checkbox value={{profileCert.workExperienceCurrentlyWorking}}>
+								{{l "work-experience.currently-working"}}
+							</hh-checkbox>
+						</div>
+
+					
+					{{/if}}
+				</hh-form-section>
+
+			{{/each}}
+
+
+			{{!-- ADD CERTIFICATION --}} 
+			{{#if type.availableCertifications}}
+
+				<div class="field">
+					<i class="big grey add icon"></i>
+					<ui-dropdown class="add-certification selection" onSelect="addCertification" clear-after-selection=true>
+						<i class="dropdown icon"></i>
+						<div class="default text">{{l (concat "add." type.key)}}</div>
+						<div class="menu">
+							{{#each type.availableCertifications as |certification|}}
+							<div class="item" data-value={{certification.key}}>{{certification.title}}</div>
+							{{/each}}
+						</div>
+					</ui-dropdown>
+				</div>
+
+			{{/if}}
+
+	
+		{{/if}}
+
+
+	</div>
+
+
+{{/each}}

@@ -1,0 +1,35 @@
+<div class="content">
+	
+	{{#if jobs}}
+
+		<div class="ui relaxed list">
+			{{#each jobs as |job|}}
+				<a class="item" {{linkTo "employee.job.show" jobId=job.id}}>
+					
+					<i class="big icons icon" title={{job.typeTitle}}>
+						<i class="hh hh-{{job.typeIcon}} icon"></i>
+						<i class="blue corner {{if job.isPermanentJob "building" "lightning"}} icon"></i>
+					</i>
+					<div class="content">
+						<div class="header">{{job.company.name}}</div>
+						<div class="description">
+							{{#if (equal (momentFormat job.startDate "LL") (momentFormat job.endDate "LL"))}}
+								{{momentFormat job.startDate "LL"}}
+							{{else}}
+								{{momentFormat job.startDate "LL"}} - {{momentFormat job.endDate "LL"}}
+							{{/if}}
+						</div>
+					</div>
+				</a>
+			{{/each}}
+		</div>
+
+	{{else}}
+
+		<p>{{t "generic.no-jobs"}}</p>
+
+	{{/if}}
+
+	<button class="ui fluid primary button" {{linkTo "employee.job.index"}}>{{t "generic.view-all-x-jobs" total=(get jobs "page.recordCount")}}</button>
+
+</div>

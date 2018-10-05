@@ -42,6 +42,7 @@ npm manifest:
     },
     "dependencies": {
       "cheerio": "^1.0.0-rc.2",
+      "error-stack-parser": "^2.0.2",
       "lodash": "^4.17.11",
       "xml2js": "^0.4.19"
     }
@@ -1928,6 +1929,13 @@ Lockfile:
     integrity sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==
     dependencies:
       is-arrayish "^0.2.1"
+  
+  error-stack-parser@^2.0.2:
+    version "2.0.2"
+    resolved "https://registry.yarnpkg.com/error-stack-parser/-/error-stack-parser-2.0.2.tgz#4ae8dbaa2bf90a8b450707b9149dcabca135520d"
+    integrity sha512-E1fPutRDdIj/hohG0UpT5mayXNCxXP9d+snxFsPU9X0XgccOumKraa3juDMwTUyi7+Bu5+mCGagjg4IYeNbOdw==
+    dependencies:
+      stackframe "^1.0.4"
   
   es-abstract@^1.5.1, es-abstract@^1.6.1:
     version "1.12.0"
@@ -4554,6 +4562,11 @@ Lockfile:
     version "0.1.8"
     resolved "https://registry.yarnpkg.com/stable/-/stable-0.1.8.tgz#836eb3c8382fe2936feaf544631017ce7d47a3cf"
     integrity sha512-ji9qxRnOVfcuLDySj9qzhGSEFVobyt1kIOSkj1qZzYLzq7Tos/oUUWvotUPQLlrsidqsK6tBH89Bc9kL5zHA6w==
+  
+  stackframe@^1.0.4:
+    version "1.0.4"
+    resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.0.4.tgz#357b24a992f9427cba6b545d96a14ed2cbca187b"
+    integrity sha512-to7oADIniaYwS3MhtCa/sQhrxidCCQiF/qp4/m5iN3ipf0Y7Xlri0f6eG29r08aL7JYl8n32AF3Q5GYBZ7K8vw==
   
   static-eval@^2.0.0:
     version "2.0.0"

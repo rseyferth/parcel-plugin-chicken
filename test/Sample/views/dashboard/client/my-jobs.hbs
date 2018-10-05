@@ -1,0 +1,39 @@
+<div class="content">
+	{{#if jobs}}
+
+		<div class="ui relaxed list">
+			{{#each jobs as |job|}}
+	
+				<a class="item" {{linkTo "client.job.show" jobId=job.id}}>
+
+					<hh-job-type-icon job={{job}} />
+					
+					<div class="content">
+						{{#if job.isPermanentJob}}
+							<div class="header">
+								{{job.typeTitle}}
+							</div>
+						{{else}}
+							<div class="header">
+								{{job.formattedDates}}							
+							</div>
+							<div class="description">
+								{{job.typeTitle}}								
+							</div>
+						{{/if}}						
+					</div>
+				</a>
+			{{/each}}
+		</div>
+
+	{{else}}
+		
+		<p>{{t "generic.no-jobs"}}</p>
+
+	{{/if}}
+	
+	{{#if (gt (get jobs "page.recordCount") 5)}}
+		<button class="ui fluid button" {{linkTo "client.job.index"}}>{{t "generic.view-all-x-jobs" total=(get jobs "page.recordCount")}}</button>
+	{{/if}}
+
+</div>

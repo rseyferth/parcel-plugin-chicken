@@ -1,0 +1,20 @@
+{{#if pages}}
+	<div class="ui pagination menu">
+		<div class="disabled item">{{showingLabel}}</div>
+		{{#each pages as |page|}}
+
+			{{#if (isNumeric page)}}
+
+				<a class="{{if (equal page currentPage) "active" ""}} item" {{action "selectPage" page}}>
+					{{page}}
+				</a>
+
+			{{else}}
+
+				<div class="disabled item">{{page}}</div>
+
+			{{/if}}
+
+		{{/each}}
+	</div>
+{{/if}}
