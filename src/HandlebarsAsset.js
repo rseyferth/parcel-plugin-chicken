@@ -142,7 +142,7 @@ class HandlebarsAsset extends HTMLAsset {
 
 
         // Store in cache
-        code = `module.exports = \`${code}\`;`;
+        code = `module.exports = \'${code.replace(/[\\$'"]/g, "\\$&")}\';`;
 
         return [{
             type: 'js',
